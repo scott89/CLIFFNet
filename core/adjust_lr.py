@@ -4,7 +4,7 @@ from core.config import config
 from core.build_optimizer import build_optimizer
 
 def adjust_lr(epoch, net, opt, best_epoch):
-    if epoch%config.train.lr_decay_epoch and epoch != 0:
+    if epoch%config.train.lr_decay_epoch == 0 and epoch != 0:
         ckpt = torch.load(
             join(config.train.output_path, 'epoch-%d.pth'%best_epoch), 
             map_location = config.gpu[0])

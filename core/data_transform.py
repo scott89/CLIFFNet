@@ -18,8 +18,9 @@ class RandomColor(object):
         return batch
 
 class RandomScale(object):
-    def __init__(self, min_size):
+    def __init__(self, min_size, is_depth):
         self.min_size = min_size
+        self.is_depth = is_depth
     def __call__(self, batch):
         image = np.array(batch['image'])[:, :, -1::-1].astype(np.float32)
         gt = batch['gt']
@@ -27,7 +28,10 @@ class RandomScale(object):
         scale = np.float32(size) / np.float32(np.min(image.shape[:2]))
         image = cv2.resize(image, None, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
         gt = cv2.resize(gt, None, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
-        gt *= scale
+        if self.is_depth:
+            gt /= scale
+        else:
+            gt *= scale
         batch['image'] = image
         batch['gt'] = gt
         return batch
@@ -91,12 +95,12 @@ class ToTensor(object):
         return batch
 
 class Transform(object):
-    def __init__(self, phase):
+    def __init__(self, phase, is_depth=False):
         if phase == 'train':
-            self.transforms = [RandomColor(), RandomScale(config.train.augment.random_resize), 
+            self.transforms = [RandomColor(), RandomScale(config.train.augment.random_resize, is_depth), 
                                RandomCrop(), RandomFlip(), Normalize(), ToTensor()]
         else:
-            self.transforms = [RandomScale(config.test.augment.min_size), Normalize(), ToTensor()]
+            self.transforms = [RandomScale(config.test.augment.min_size, is_depth), Normalize(), ToTensor()]
 
     def __call__(self, batch):
         for trans in self.transforms:

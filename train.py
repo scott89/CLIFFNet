@@ -6,7 +6,7 @@ from core.build_dataset import build_dataset
 from core.build_network import build_network
 from core.build_optimizer import build_optimizer
 from core.build_summary_op import build_summary_op
-from core.disp_loss import l1_loss
+from core.disp_loss import l1_loss, l2_loss
 from core.adjust_lr import adjust_lr
 
 def _display_process(img, rgb=False, gt=None):
@@ -85,19 +85,23 @@ def train():
 
 
         loss = 0
+        SE = 0
         for batch in val_loader:
             image = batch['image'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             with torch.no_grad():
                 prediction = net(image)
             cur_loss = l1_loss(gt, prediction)
+            cur_se = l2_loss(gt, prediction)
             loss += cur_loss.item()
+            SE += cur_se.item()
         loss /= len(val_loader)
+        MSE = (SE /len(val_loader))**0.5
         val_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
         val_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
         val_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
         val_summary_op.add_scalar('l1_loss', loss, global_step=global_step)
-        print("Epoch: %d, Val Loss: %f Best Loss: %s"%(epoch, loss, str(best_loss)))
+        print("Epoch: %d, Val Loss: %f Best Loss: %s, MSE: %f"%(epoch, loss, str(best_loss), MSE))
 
         if best_loss is None or loss <= best_loss:
             best_loss = loss
