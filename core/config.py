@@ -1,0 +1,50 @@
+from easydict import EasyDict as edict
+import numpy as np
+#import yaml
+
+
+config = edict()
+
+config.dataset = edict()
+config.dataset.name = 'Cityscape'
+config.dataset.data_path = '/media/4TB/Research/DataSet/cityscape/'
+config.dataset.train_data_file = 'train_list_torch.p'
+config.dataset.val_data_file = 'val_list_torch.p'
+
+config.network = edict()
+config.network.backbone_fix_bn = True
+config.network.backbone_with_dilation = False
+config.network.backbone_freeze_at = 2
+
+config.train = edict()
+config.train.augment = edict()
+config.train.augment.brightness = 0.4
+config.train.augment.contrast = 0.4
+config.train.augment.saturation = 0.4
+config.train.augment.crop_size = 512
+config.train.augment.random_resize = [512, 480, 448, 416]
+config.train.augment.pixel_mean = np.array((102.9801, 115.9465, 122.7717,))
+
+config.train.batch_size = 8
+config.train.lr = 1e-3
+config.train.lr_decay_rate = 0.1
+config.train.momentum = 0.9
+config.train.weight_decay = 1e-4
+config.train.max_epoch = 500
+config.train.lr_decay_epoch = 5
+config.train.display_iter = 20
+config.train.summary_iter = 100
+config.train.output_path = 'models/v1.0/'
+
+config.train.resume = False
+config.train.snapshot = 'models/v1.0/epoch-19.pth'
+config.train.pretrained = False
+config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
+
+config.test = edict()
+config.test.batch_size = 1
+config.test.augment = edict()
+config.test.augment.min_size = [512]
+
+config.gpu_id = '2'
+config.gpu = ['cuda:%s'%i for i in config.gpu_id.split(',')]
