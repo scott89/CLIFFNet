@@ -21,7 +21,7 @@ class RandomScale(object):
     def __init__(self, min_size):
         self.min_size = min_size
     def __call__(self, batch):
-        image = np.array(batch['image'])[:, -1::-1].astype(np.float32)
+        image = np.array(batch['image'])[:, :, -1::-1].astype(np.float32)
         gt = batch['gt']
         size = np.random.choice(self.min_size)
         scale = np.float32(size) / np.float32(np.min(image.shape[:2]))
