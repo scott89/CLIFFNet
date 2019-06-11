@@ -1,4 +1,5 @@
 import torch
+from core.config import config
 
 
 class SGD(torch.optim.SGD):
@@ -8,4 +9,5 @@ class SGD(torch.optim.SGD):
     def decay_lr(self, factor=0.1):
         for p in self.param_groups:
             p['lr'] *= factor
+        self.defaults['lr'] *= factor
 
