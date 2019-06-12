@@ -26,21 +26,21 @@ config.train.augment.random_resize = [459, 427, 400, 368]
 config.train.augment.pixel_mean = np.array((102.9801, 115.9465, 122.7717,))
 
 config.train.batch_size = 8
-config.train.lr = 1e-2
+config.train.lr = 5e-3
 config.train.lr_decay_rate = 0.1
-config.train.warmup_epoch = 0
-config.train.warmup_lr = 1e-3
+config.train.warmup_epoch = 1
+config.train.warmup_lr = 5e-4
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
 config.train.max_epoch = 500
 config.train.lr_decay_epoch = 500
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.1/'
+config.train.output_path = 'models/nyu_v1.2/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.0/epoch-3.pth'
-config.train.pretrained = True
+config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 
 config.test = edict()
@@ -48,5 +48,5 @@ config.test.batch_size = 1
 config.test.augment = edict()
 config.test.augment.min_size = [427]
 
-config.gpu_id = '0'
+config.gpu_id = '1'
 config.gpu = ['cuda:%s'%i for i in config.gpu_id.split(',')]
