@@ -11,3 +11,8 @@ class SGD(torch.optim.SGD):
             p['lr'] *= factor
         self.defaults['lr'] *= factor
 
+    def set_lr(self, lr):
+        for p in self.param_groups:
+            p['lr'] = lr
+        self.defaults['lr'] = lr
+

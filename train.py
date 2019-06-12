@@ -112,7 +112,8 @@ def train():
                 'global_step': global_step,
                 'model_state_dict': net.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': loss
+                'loss': loss,
+                'config': config
             }, os.path.join(config.train.output_path, 'epoch-%d.pth'%epoch))
     
 
