@@ -38,7 +38,6 @@ class RandomScale(object):
 class RandomFlip(object):
     def __init__(self, prob=0.5):
         self.prob = prob
-
     def __call__(self, batch):
         flip = np.random.rand()<self.prob
         if flip:
@@ -97,14 +96,14 @@ class ToTensor(object):
 class Transform(object):
     def __init__(self, phase, is_depth=False):
         if phase == 'train':
-            self.transforms = [RandomColor(), RandomScale(config.train.augment.random_resize, is_depth), 
+            self.transforms = T.Compose([RandomColor(), RandomScale(config.train.augment.random_resize, is_depth), 
                                RandomCrop(), RandomFlip(), Normalize(), ToTensor()]
+)
         else:
-            self.transforms = [RandomScale(config.test.augment.min_size, is_depth), Normalize(), ToTensor()]
+            self.transforms = T.Compose([RandomScale(config.test.augment.min_size, is_depth), Normalize(), ToTensor()])
 
     def __call__(self, batch):
-        for trans in self.transforms:
-            batch = trans(batch)
+        batch = self.transforms(batch)
         return batch
 
 

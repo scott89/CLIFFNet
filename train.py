@@ -62,6 +62,7 @@ def train():
     net.eval()
     for epoch in range(begin_epoch, config.train.max_epoch):
         net, optimizer = adjust_lr(epoch, net, optimizer, best_epoch)
+        np.random.seed()
         for batch_id, batch in enumerate(train_loader):
             optimizer.zero_grad()
             # train loop
@@ -72,10 +73,10 @@ def train():
             loss.backward()
             optimizer.step()
             
-            if global_step % config.train.display_iter == 0 and batch_id != 0:
+            if global_step % config.train.display_iter == 0 and global_step != 0:
                 print('Epoch: %d/%d, Batch ID: %d/%d, Loss: %f'%
                       (epoch, config.train.max_epoch, batch_id, len(train_loader), loss.item()))
-            if global_step % config.train.summary_iter == 0 and batch_id != 0:
+            if global_step % config.train.summary_iter == 0 and global_step != 0:
                 train_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
                 train_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
                 train_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)

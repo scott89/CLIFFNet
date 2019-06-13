@@ -1,6 +1,6 @@
 from network.resnet import get_params
 from core.config import config
-from core.optimizer import SGD
+from core.optimizer import SGD, Adam
 
 
 def get_param_lr(net):
@@ -17,4 +17,5 @@ def get_param_lr(net):
 def build_optimizer(net):
     params = get_param_lr(net.module)
     opt = SGD(params, lr=config.train.lr, momentum=config.train.momentum, weight_decay=config.train.weight_decay)
+    #opt = Adam(params, lr=config.train.lr, weight_decay=config.train.weight_decay)
     return opt

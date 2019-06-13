@@ -21,7 +21,7 @@ class FPN(nn.Module):
         self.fpn_p3 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
         self.fpn_p2 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
 
-        self.initialize()
+       # self.initialize()
 
     def initialize(self):
         for m in self.modules():

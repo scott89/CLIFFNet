@@ -39,7 +39,7 @@ class FCNSubNet(nn.Module):
             conv.append(nn.ReLU(inplace=True))
             self.conv.append(nn.Sequential(*conv))
 
-        self.initialize()
+        #self.initialize()
 
     def initialize(self):
         for m in self.modules():
@@ -67,7 +67,7 @@ class FCN(nn.Module):
         self.fcn_subnet = FCNSubNet(in_channels, 128, num_layers)
 
         self.score = nn.Conv2d(640, num_classes, 1)
-        self.initialize()
+        #self.initialize()
 
     def forward(self, fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6, img):
         fpn_p2 = self.fcn_subnet(fpn_p2)
