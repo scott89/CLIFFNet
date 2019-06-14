@@ -16,6 +16,6 @@ def adjust_lr(epoch, net, opt, best_epoch):
         opt = build_optimizer(net)
         #opt.decay_lr(factor = config.train.lr_decay_rate**(epoch/config.train.lr_decay_epoch))
         lr = config.train.lr * config.train.lr_decay_rate**(epoch/config.train.lr_decay_epoch)
-        opt.seg_lr(lr = lr)
+        opt.set_lr(lr = lr)
     return net, opt
 
