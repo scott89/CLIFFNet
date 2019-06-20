@@ -33,13 +33,13 @@ config.train.warmup_lr = 1e-3
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
 config.train.max_epoch = 500
-config.train.lr_decay_epoch = 500
+config.train.lr_decay_epoch = 18
 config.train.display_iter = 20
 config.train.summary_iter = 100
 config.train.output_path = 'models/nyu_v1.2/'
 
 config.train.resume = True
-config.train.snapshot = 'models/nyu_v1.2/epoch-4.pth'
+config.train.snapshot = 'models/nyu_v1.2/epoch-17.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 

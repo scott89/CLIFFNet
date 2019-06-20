@@ -57,7 +57,6 @@ def train():
     elif config.train.pretrained_backbone is not None:
         state_dict = net.module.res_backbone.modify_state_dict_keys(torch.load(config.train.pretrained_backbone, map_location = config.gpu[0]))
         net.module.res_backbone.load_state_dict(state_dict, strict=False)
-    best_epoch = begin_epoch
     
     net.eval()
     for epoch in range(begin_epoch, config.train.max_epoch):
