@@ -8,7 +8,7 @@ def adjust_lr(epoch, net, opt, best_epoch):
         opt.set_lr(lr = config.train.warmup_lr)
     elif epoch == config.train.warmup_epoch:
         opt.set_lr(lr = config.train.lr)
-    elif epoch%config.train.lr_decay_epoch == 0 and epoch != 0:
+    elif (epoch%config.train.lr_decay_epoch == 0) and (epoch != 0):
         ckpt = torch.load(
             join(config.train.output_path, 'epoch-%d.pth'%best_epoch), 
             map_location = config.gpu[0])
