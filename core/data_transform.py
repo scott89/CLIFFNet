@@ -17,12 +17,27 @@ class RandomColor(object):
         batch['image'] = image
         return batch
 
+class Resize(object):
+    def __init__(self, scale=None):
+        if scale is None:
+            scale = config.scale
+        self.scale = scale
+
+    def __call__(self, batch):
+        image = np.array(batch['image'])[:, :, -1::-1].astype(np.float32)
+        image = cv2.resize(image, (0, 0), fx=self.scale, fy=self.scale, interpolation=cv2.INTER_LINEAR)
+        gt = batch['gt']
+        gt = cv2.resize(gt, (0, 0), fx=self.scale, fy=self.scale, interpolation=cv2.INTER_LINEAR)
+        batch['image'] = image
+        batch['gt'] = gt
+        return batch
+
 class RandomScale(object):
     def __init__(self, min_size, is_depth):
         self.min_size = min_size
         self.is_depth = is_depth
     def __call__(self, batch):
-        image = np.array(batch['image'])[:, :, -1::-1].astype(np.float32)
+        image = batch['image']
         gt = batch['gt']
         size = np.random.choice(self.min_size)
         scale = np.float32(size) / np.float32(np.min(image.shape[:2]))
@@ -96,11 +111,11 @@ class ToTensor(object):
 class Transform(object):
     def __init__(self, phase, is_depth=False):
         if phase == 'train':
-            self.transforms = T.Compose([RandomColor(), RandomScale(config.train.augment.random_resize, is_depth), 
-                               RandomCrop(), RandomFlip(), Normalize(), ToTensor()]
+            self.transforms = T.Compose([RandomColor(), Resize(config.dataset.scale), 
+                               RandomFlip(), Normalize(), ToTensor()]
 )
         else:
-            self.transforms = T.Compose([RandomScale(config.test.augment.min_size, is_depth), Normalize(), ToTensor()])
+            self.transforms = T.Compose([Resize(config.dataset.scale), Normalize(), ToTensor()])
 
     def __call__(self, batch):
         batch = self.transforms(batch)
