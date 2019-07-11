@@ -58,10 +58,10 @@ def train():
         state_dict = net.module.res_backbone.modify_state_dict_keys(torch.load(config.train.pretrained_backbone, map_location = config.gpu[0]))
         net.module.res_backbone.load_state_dict(state_dict, strict=False)
     
-    net.eval()
     for epoch in range(begin_epoch, config.train.max_epoch):
         net, optimizer = adjust_lr(epoch, net, optimizer, best_epoch)
         np.random.seed()
+        net.module.set_stage('train')
         for batch_id, batch in enumerate(train_loader):
             optimizer.zero_grad()
             # train loop
@@ -86,6 +86,7 @@ def train():
 
         loss = 0
         SE = 0
+        net.module.set_stage('eval')
         for batch in val_loader:
             image = batch['image'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])

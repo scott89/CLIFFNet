@@ -3,6 +3,7 @@ from torch import nn
 from network.resnet import ResNetBackbone
 from network.fpn import FPN
 from network.fcn import FCN
+from core.config import config
 
 
 
@@ -20,5 +21,15 @@ class Net(nn.Module):
         fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6 = self.fpn(res2, res3, res4, res5)
         output = self.fcn(fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6, x)
         return output
+
+    def set_stage(self, stage):
+        if stage == 'eval':
+            self.eval()
+        elif stage == 'train':
+            if config.network.backbone_fix_bn:
+                self.eval()
+            else:
+                self.train()
+                self.res_backbone.freeze_bn_at_initial()
 
 

@@ -198,3 +198,9 @@ class ResNetBackbone(nn.Module):
         res5 = self.res5(res4).detach() if self.freeze_at == 5 else self.res5(res4)
 
         return res2, res3, res4, res5
+    def freeze_bn_at_initial(self):
+        if self.freeze_at > 0:
+            self.conv1.eval()
+            for i in range(2, self.freeze_at + 1):
+                eval('self.res{}'.format(i)).eval()
+

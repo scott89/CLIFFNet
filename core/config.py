@@ -48,5 +48,5 @@ config.test.batch_size = 1
 config.test.augment = edict()
 config.test.augment.min_size = [427]
 
-config.gpu_id = '1'
+config.gpu_id = '2'
 config.gpu = ['cuda:%s'%i for i in config.gpu_id.split(',')]
