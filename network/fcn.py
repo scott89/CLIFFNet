@@ -24,7 +24,7 @@ import torch.nn.functional as F
 #
 class FCNSubNet(nn.Module):
 
-    def __init__(self, in_channels, out_channels, num_layers, dilation=1):
+    def __init__(self, in_channels, out_channels, num_layers, bn=False, dilation=1):
         super(FCNSubNet, self).__init__()
 
         self.num_layers = num_layers
@@ -36,6 +36,8 @@ class FCNSubNet(nn.Module):
                 in_channels = out_channels
             else:
                 conv.append(nn.Conv2d(in_channels, in_channels, kernel_size=3, stride=1, padding=dilation, dilation=dilation))
+            if bn:
+                conv.append(nn.BatchNorm2d(in_channels))
             conv.append(nn.ReLU(inplace=True))
             self.conv.append(nn.Sequential(*conv))
 
@@ -62,19 +64,23 @@ class FCNSubNet(nn.Module):
 
 class FCN(nn.Module):
 
-    def __init__(self, in_channels, num_classes, num_layers):
+    def __init__(self, in_channels, num_classes, num_layers, bn=False):
         super(FCN, self).__init__()
-        self.fcn_subnet = FCNSubNet(in_channels, 128, num_layers)
+        self.fcn_subnet2 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
+        self.fcn_subnet3 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
+        self.fcn_subnet4 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
+        self.fcn_subnet5 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
+        self.fcn_subnet6 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
 
         self.score = nn.Conv2d(640, num_classes, 1)
         #self.initialize()
 
     def forward(self, fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6, img):
-        fpn_p2 = self.fcn_subnet(fpn_p2)
-        fpn_p3 = self.fcn_subnet(fpn_p3)
-        fpn_p4 = self.fcn_subnet(fpn_p4)
-        fpn_p5 = self.fcn_subnet(fpn_p5)
-        fpn_p6 = self.fcn_subnet(fpn_p6)
+        fpn_p2 = self.fcn_subnet2(fpn_p2)
+        fpn_p3 = self.fcn_subnet3(fpn_p3)
+        fpn_p4 = self.fcn_subnet4(fpn_p4)
+        fpn_p5 = self.fcn_subnet5(fpn_p5)
+        fpn_p6 = self.fcn_subnet6(fpn_p6)
 
         fpn_p3 = F.interpolate(fpn_p3, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
         fpn_p4 = F.interpolate(fpn_p4, fpn_p2.shape[2:], mode='bilinear', align_corners=False)

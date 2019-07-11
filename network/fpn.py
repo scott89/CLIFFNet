@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class FPN(nn.Module):
-    def __init__(self, feature_dim=256):
+    def __init__(self, feature_dim=256, bn=False):
         super(FPN, self).__init__()
         self.feature_dim = feature_dim
         self.upsample_method = 'nearest'
@@ -12,14 +12,25 @@ class FPN(nn.Module):
             return F.interpolate(input, scale_factor=2, mode=self.upsample_method, align_corners=False if self.upsample_method == 'bilinear' else None)
         self.fpn_upsample = interpolate
         self.fpn_p6 = nn.MaxPool2d(kernel_size=1, stride=2)
-        self.fpn_p5_1x1 = nn.Conv2d(2048, feature_dim, 1)
-        self.fpn_p4_1x1 = nn.Conv2d(1024, feature_dim, 1)
-        self.fpn_p3_1x1 = nn.Conv2d(512, feature_dim, 1)
-        self.fpn_p2_1x1 = nn.Conv2d(256, feature_dim, 1)
-        self.fpn_p5 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
-        self.fpn_p4 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
-        self.fpn_p3 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
-        self.fpn_p2 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
+        if bn:
+            self.fpn_p5_1x1 = nn.Sequential(nn.Conv2d(2048, feature_dim, 1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p4_1x1 = nn.Sequential(nn.Conv2d(1024, feature_dim, 1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p3_1x1 = nn.Sequential(nn.Conv2d(512, feature_dim, 1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p2_1x1 = nn.Sequential(nn.Conv2d(256, feature_dim, 1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p5 = nn.Sequential(nn.Conv2d(feature_dim, feature_dim, 3, padding=1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p4 = nn.Sequential(nn.Conv2d(feature_dim, feature_dim, 3, padding=1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p3 = nn.Sequential(nn.Conv2d(feature_dim, feature_dim, 3, padding=1), nn.BatchNorm2d(feature_dim))
+            self.fpn_p2 = nn.Sequential(nn.Conv2d(feature_dim, feature_dim, 3, padding=1), nn.BatchNorm2d(feature_dim))
+
+        else:
+            self.fpn_p5_1x1 = nn.Conv2d(2048, feature_dim, 1)
+            self.fpn_p4_1x1 = nn.Conv2d(1024, feature_dim, 1)
+            self.fpn_p3_1x1 = nn.Conv2d(512, feature_dim, 1)
+            self.fpn_p2_1x1 = nn.Conv2d(256, feature_dim, 1)
+            self.fpn_p5 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
+            self.fpn_p4 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
+            self.fpn_p3 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
+            self.fpn_p2 = nn.Conv2d(feature_dim, feature_dim, 3, padding=1)
 
        # self.initialize()
 

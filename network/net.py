@@ -12,8 +12,8 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.res_backbone = ResNetBackbone([3, 4, 6, 3])
-        self.fpn = FPN()
-        self.fcn = FCN(in_channels=256, num_classes=1, num_layers=3)
+        self.fpn = FPN(bn=True)
+        self.fcn = FCN(in_channels=256, num_classes=1, num_layers=3, bn=True)
 
     def forward(self, x):
         res2, res3, res4, res5 = self.res_backbone(x)

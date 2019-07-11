@@ -12,7 +12,7 @@ config.dataset.train_data_file = 'train_list.p'
 config.dataset.val_data_file = 'test_list.p'
 
 config.network = edict()
-config.network.backbone_fix_bn = True
+config.network.backbone_fix_bn = False
 config.network.backbone_with_dilation = False
 config.network.backbone_freeze_at = 2
 
@@ -36,7 +36,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 18
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.2.3/'
+config.train.output_path = 'models/nyu_v1.2.4/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.2/epoch-17.pth'
