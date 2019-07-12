@@ -70,23 +70,33 @@ class FCN(nn.Module):
         self.fcn_subnet3 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
         self.fcn_subnet4 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
         self.fcn_subnet5 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
-        self.fcn_subnet6 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
+        #self.fcn_subnet6 = FCNSubNet(in_channels, 128, num_layers, bn=bn)
+        if bn:
+            self.score = nn.Sequential(nn.Conv2d(512, 256, 3, padding=1, bias=False), 
+                                       nn.BatchNorm2d(256), 
+                                       nn.ReLU(inplace=True),
+                                       nn.Conv2d(256, 1, 3, padding=1),
+                                  )
+        else:
+            self.score = nn.Sequential(nn.Conv2d(640, 256, 3, padding=1), 
+                                       nn.ReLU(inplace=True),
+                                       nn.Conv2d(256, 1, 3, padding=1),
+                                  )
 
-        self.score = nn.Conv2d(640, num_classes, 1)
         #self.initialize()
 
-    def forward(self, fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6, img):
+    def forward(self, fpn_p2, fpn_p3, fpn_p4, fpn_p5, img):
         fpn_p2 = self.fcn_subnet2(fpn_p2)
         fpn_p3 = self.fcn_subnet3(fpn_p3)
         fpn_p4 = self.fcn_subnet4(fpn_p4)
         fpn_p5 = self.fcn_subnet5(fpn_p5)
-        fpn_p6 = self.fcn_subnet6(fpn_p6)
+        #fpn_p6 = self.fcn_subnet6(fpn_p6)
 
         fpn_p3 = F.interpolate(fpn_p3, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
         fpn_p4 = F.interpolate(fpn_p4, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
         fpn_p5 = F.interpolate(fpn_p5, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
-        fpn_p6 = F.interpolate(fpn_p6, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
-        feat = torch.cat([fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6], dim=1)
+        #fpn_p6 = F.interpolate(fpn_p6, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
+        feat = torch.cat([fpn_p2, fpn_p3, fpn_p4, fpn_p5], dim=1)
         score_lr = self.score(feat)
         score = F.interpolate(score_lr, img.shape[2:], mode='bilinear', align_corners=False)
         return score

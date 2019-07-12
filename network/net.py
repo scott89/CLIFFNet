@@ -18,8 +18,8 @@ class Net(nn.Module):
 
     def forward(self, x):
         res2, res3, res4, res5 = self.res_backbone(x)
-        fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6 = self.fpn(res2, res3, res4, res5)
-        output = self.fcn(fpn_p2, fpn_p3, fpn_p4, fpn_p5, fpn_p6, x)
+        fpn_p2, fpn_p3, fpn_p4, fpn_p5 = self.fpn(res2, res3, res4, res5)
+        output = self.fcn(fpn_p2, fpn_p3, fpn_p4, fpn_p5, x)
         return output
 
     def set_stage(self, stage):

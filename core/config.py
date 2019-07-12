@@ -20,9 +20,9 @@ config.network.backbone_freeze_at = 0
 
 config.train = edict()
 config.train.augment = edict()
-config.train.augment.brightness = 0.4
-config.train.augment.contrast = 0.4
-config.train.augment.saturation = 0.4
+config.train.augment.brightness = 0.2
+config.train.augment.contrast = 0.2
+config.train.augment.saturation = 0.2
 config.train.augment.crop_size = 427
 config.train.augment.random_resize = [459, 427, 400, 368]
 config.train.augment.pixel_mean = np.array((102.9801, 115.9465, 122.7717,))
@@ -35,10 +35,10 @@ config.train.warmup_lr = 1e-3
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-6
 config.train.max_epoch = 500
-config.train.lr_decay_epoch = 18
+config.train.lr_decay_epoch = 15
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.2.5/'
+config.train.output_path = 'models/nyu_v1.2.6/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.2/epoch-17.pth'
@@ -50,6 +50,6 @@ config.test.batch_size = 1
 config.test.augment = edict()
 config.test.augment.min_size = [427]
 
-config.gpu_id = '1'
+config.gpu_id = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]
