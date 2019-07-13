@@ -14,7 +14,7 @@ config.dataset.val_data_file = 'test_list.p'
 config.dataset.scale = 0.5
 
 config.network = edict()
-config.network.backbone_fix_bn = False
+config.network.backbone_fix_bn = True
 config.network.backbone_with_dilation = False
 config.network.backbone_freeze_at = 0
 
@@ -38,7 +38,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.2.6/'
+config.train.output_path = 'models/nyu_v1.2.6_nobn/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.2/epoch-17.pth'
@@ -50,6 +50,6 @@ config.test.batch_size = 1
 config.test.augment = edict()
 config.test.augment.min_size = [427]
 
-config.gpu_id = '1'
+config.gpu_id = '2'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]

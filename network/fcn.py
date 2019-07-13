@@ -78,7 +78,7 @@ class FCN(nn.Module):
                                        nn.Conv2d(256, 1, 3, padding=1),
                                   )
         else:
-            self.score = nn.Sequential(nn.Conv2d(640, 256, 3, padding=1), 
+            self.score = nn.Sequential(nn.Conv2d(512, 256, 3, padding=1), 
                                        nn.ReLU(inplace=True),
                                        nn.Conv2d(256, 1, 3, padding=1),
                                   )
