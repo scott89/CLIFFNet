@@ -153,7 +153,7 @@ class ResNetBackbone(nn.Module):
         self.freeze_at = config.network.backbone_freeze_at
 
 
-        self.conv1 = conv1(requires_grad=False)
+        self.conv1 = conv1(requires_grad=True)
         self.res2 = res_block(64, blocks[0], fix_bn=self.fix_bn)
         self.res3 = res_block(128, blocks[1], block= Bottleneck,
                               stride=2, fix_bn=self.fix_bn)

@@ -35,7 +35,7 @@ config.train.warmup_lr = 1e-3
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-6
 config.train.max_epoch = 500
-config.train.lr_decay_epoch = 15
+config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
 config.train.output_path = 'models/nyu_v1.2.6/'
@@ -50,6 +50,6 @@ config.test.batch_size = 1
 config.test.augment = edict()
 config.test.augment.min_size = [427]
 
-config.gpu_id = '3'
+config.gpu_id = '1'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]
