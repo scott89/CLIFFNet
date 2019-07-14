@@ -27,6 +27,8 @@ def get_params(model, prefixs, suffixes, exclude=None):
     requires_grad is set to False in deeplab_resnet.py, therefore this function does not return
     any batchnorm parameter
     """
+    params = []
+    params_names = []
     for name, module in model.named_modules():
         for prefix in prefixs:
             if name == prefix:
@@ -39,8 +41,11 @@ def get_params(model, prefixs, suffixes, exclude=None):
 
                     for suffix in suffixes:
                         if (n.split('.')[-1].startswith(suffix) or n.endswith(suffix)) and p.requires_grad:
-                            yield p
-                break
+                            #yield p
+                            params.append(p)
+                            params_names.append(n)
+                #break
+    return params, params_names
 
 class Bottleneck(nn.Module):
     expansion = 4
