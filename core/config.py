@@ -38,7 +38,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.2.6/'
+config.train.output_path = 'models/nyu_v1.2.6_test/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.2/epoch-17.pth'
