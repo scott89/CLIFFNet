@@ -25,9 +25,9 @@ class Resize(object):
 
     def __call__(self, batch):
         image = np.array(batch['image'])[:, :, -1::-1].astype(np.float32)
-        image = cv2.resize(image, (0, 0), fx=self.scale, fy=self.scale, interpolation=cv2.INTER_LINEAR)
+        image = cv2.resize(image, (300, 228), interpolation=cv2.INTER_LINEAR)
         gt = batch['gt']
-        gt = cv2.resize(gt, (0, 0), fx=self.scale, fy=self.scale, interpolation=cv2.INTER_LINEAR)
+        gt = cv2.resize(gt, (300, 228), interpolation=cv2.INTER_LINEAR)
         batch['image'] = image
         batch['gt'] = gt
         return batch
