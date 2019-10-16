@@ -3,3 +3,5 @@ models
 *pyc
 *swp
 log
+ignore
+res

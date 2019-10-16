@@ -19,19 +19,19 @@ def get_param_lr(net):
     fcn_w = get_params(net, ['fcn'], ['weight'], bn_names)
     fcn_b = get_params(net, ['fcn'], ['bias'], bn_names)
     params = [
-        {'params': bn_params, 'params_names':bn_names, 'lr_mul': 1.0, 'weight_decay':0},
-        {'params': res_backbone_w[0], 'params_names': res_backbone_w[1], 'lr_mul': 1.0},
-        {'params': res_backbone_b[0], 'params_names': res_backbone_b[1], 'lr': 2 * config.train.lr, 'weight_decay': 0.0, 'lr_mul': 2.0},
-        {'params': fpn_w[0], 'params_names': fpn_w[1], 'lr_mul': 1.0},
-        {'params': fpn_b[0], 'params_names': fpn_b[1], 'lr': 2 * config.train.lr, 'weight_decay': 0.0, 'lr_mul': 2.0},
-        {'params': fcn_w[0], 'params_names': fcn_w[1], 'lr_mul': 1.0},
-        {'params': fcn_b[0], 'params_names': fcn_b[1], 'lr': 2 * config.train.lr, 'weight_decay': 0.0, 'lr_mul': 2.0},
+        {'params': bn_params, 'params_names':bn_names, 'lr': 1.0, 'weight_decay':0},
+        {'params': res_backbone_w[0], 'params_names': res_backbone_w[1], 'lr': 1.0},
+        {'params': res_backbone_b[0], 'params_names': res_backbone_b[1], 'lr': 1.0, 'weight_decay': 0.0},
+        {'params': fpn_w[0], 'params_names': fpn_w[1], 'lr': 1.0},
+        {'params': fpn_b[0], 'params_names': fpn_b[1], 'lr': 1.0, 'weight_decay': 0.0},
+        {'params': fcn_w[0], 'params_names': fcn_w[1], 'lr': 1.0},
+        {'params': fcn_b[0], 'params_names': fcn_b[1], 'lr': 1.0, 'weight_decay': 0.0},
     ]
     return params
 
 
 def build_optimizer(net):
     params = get_param_lr(net.module)
-    #opt = SGD(params, lr=config.train.lr, momentum=config.train.momentum, weight_decay=config.train.weight_decay)
-    opt = Adam(params, lr=config.train.lr, weight_decay=config.train.weight_decay)
+    opt = SGD(params, lr=1.0, momentum=config.train.momentum, weight_decay=config.train.weight_decay)
+    #opt = Adam(params, lr=config.train.lr, weight_decay=config.train.weight_decay)
     return opt

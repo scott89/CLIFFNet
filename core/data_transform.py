@@ -1,121 +1,120 @@
+from __future__ import division
 from core.config import config
 import torch
 from PIL import Image
 import cv2
 import torchvision.transforms as T
 import numpy as np
+import random
 
 
 class RandomColor(object):
-    def __init__(self):
-        self.color_jitter = T.ColorJitter(brightness=config.train.augment.brightness,
-                                     contrast = config.train.augment.contrast,
-                                     saturation = config.train.augment.saturation)
+    def __init__(self, brightness, contrast, saturation):
+        self.color_jitter = T.ColorJitter(brightness=brightness,
+                                     contrast = contrast,
+                                     saturation = saturation)
     def __call__(self, batch):
-        image = batch['image']
+        image = batch['data']
         image = self.color_jitter(image)
-        batch['image'] = image
+        batch['data'] = image
         return batch
+
+class ToArray(object):
+    def __init__(self):
+        pass
+
+    def __call__(self, batch):
+        image = np.array(batch['data']).astype(np.float32)
+        gt = np.array(batch['gt']).astype(np.float32) / 255.0 * 10.0
+        if len(image.shape) == 3:
+            image = image[:, :, -1::-1]       
+        else:
+            image = np.tile(image[:,:,None], [1,1,3])
+
+        if len(gt.shape) == 3:
+            gt = gt[:, :, 0]
+        batch['data'] = image
+        batch['gt'] = gt
+        return batch
+
+class CenterCrop(object):
+    def __init__(self, crop_size):
+        self.crop_size = crop_size
+
+    def __call__(self, batch):
+        image = batch['data']
+        gt = batch['gt']
+        h, w = gt.shape
+        y1 = int(round(h - self.crop_size[0]))
+        x1 = int(round(w - self.crop_size[1]))
+        image = image[y1:y1+self.crop_size[0], x1:x1+self.crop_size[1]]
+        gt = gt[y1:y1+self.crop_size[0], x1:x1+self.crop_size[1]]
+        batch['data'] = image
+        batch['gt'] = gt
+        return batch
+
+
 
 class Resize(object):
-    def __init__(self, scale=None):
-        if scale is None:
-            scale = config.scale
-        self.scale = scale
+    def __init__(self, target_sizes, max_size):
+        self.max_size = max_size
+        self.target_sizes = target_sizes
 
     def __call__(self, batch):
-        image = np.array(batch['image'])[:, :, -1::-1].astype(np.float32)
-        image = cv2.resize(image, (300, 228), interpolation=cv2.INTER_LINEAR)
+        image = batch['data']
         gt = batch['gt']
-        gt = cv2.resize(gt, (300, 228), interpolation=cv2.INTER_LINEAR)
-        batch['image'] = image
+        size_id = random.randint(0, len(self.target_sizes)-1)
+        target_size = self.target_sizes[size_id]
+        im_size_min = min(image.shape[:2])
+        im_size_max = max(image.shape[:2])
+        scale = target_size / im_size_min
+        if scale * im_size_max > self.max_size:
+            scale = self.max_size / im_size_max
+        image = cv2.resize(image, None, None, scale, scale, interpolation=cv2.INTER_LINEAR)
+        gt = cv2.resize(gt, None, None, scale, scale, interpolation=cv2.INTER_LINEAR)
+        batch['data'] = image
         batch['gt'] = gt
+        batch['im_info'] = list(image.shape[:2]) + [scale]
         return batch
 
-class RandomScale(object):
-    def __init__(self, min_size, is_depth):
-        self.min_size = min_size
-        self.is_depth = is_depth
-    def __call__(self, batch):
-        image = batch['image']
-        gt = batch['gt']
-        size = np.random.choice(self.min_size)
-        scale = np.float32(size) / np.float32(np.min(image.shape[:2]))
-        image = cv2.resize(image, None, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
-        gt = cv2.resize(gt, None, None, fx=scale, fy=scale, interpolation=cv2.INTER_LINEAR)
-        if self.is_depth:
-            gt /= scale
-        else:
-            gt *= scale
-        batch['image'] = image
-        batch['gt'] = gt
-        return batch
 class RandomFlip(object):
     def __init__(self, prob=0.5):
         self.prob = prob
     def __call__(self, batch):
-        flip = np.random.rand()<self.prob
+        flip = random.uniform(0, 1)<self.prob
         if flip:
-            batch['image'] = np.array(batch['image'][:, -1::-1])
+            batch['data'] = np.array(batch['data'][:, -1::-1])
             batch['gt'] = np.array(batch['gt'][:, -1::-1])
         return batch
 
-class RandomCrop(object):
-    def __init__(self):
-        self.crop_size = config.train.augment.crop_size
-
-    def __call__(self, batch):
-        image = batch['image']
-        gt = batch['gt']
-        h, w = image.shape[:2]
-        # pad if needed
-        pad_h = [0, 0]
-        pad_w = [0, 0]
-        if h < self.crop_size:
-            pad_h[0] = (self.crop_size - h) / 2
-            pad_h[1] = self.crop_size - h - pad_h[0]
-        if w < self.crop_size:
-            pad_w[0] = (self.crop_size -w) / 2
-            pad_w[1] = self.crop_size - w - pad_w[0]
-        image = np.pad(image, [pad_h, pad_w, [0, 0]], mode='constant')
-        gt = np.pad(gt, [pad_h, pad_w], mode='constant', constant_values=-1.0)
-        h, w = image.shape[:2]
-        y0 = np.random.randint(0, h - self.crop_size + 1)
-        x0 = np.random.randint(0, w - self.crop_size + 1)
-        image = image[y0:y0+self.crop_size, x0:x0+self.crop_size]
-        gt = gt[y0:y0+self.crop_size, x0:x0+self.crop_size]
-        batch['image'] = image
-        batch['gt'] = gt
-        return batch
-        
-
 class Normalize(object):
-    def __init__(self):
-        self.pixel_mean = config.train.augment.pixel_mean.reshape((1, 1, -1))
+    def __init__(self, pixel_mean):
+        self.pixel_mean = pixel_mean.reshape((1, 1, -1))
     def __call__(self, batch):
-        batch['image'] -= self.pixel_mean
+        batch['data'] -= self.pixel_mean
         return batch
 
-class ToTensor(object):
-    def __init__(self):
-        self.gpu = config.gpu[0]
+class HWC2CHW(object):
     def __call__(self, batch):
-        image = np.transpose(batch['image'], [2, 0, 1])
-        gt = batch['gt'][None, ...]
-        #batch['image'] = torch.tensor(image).pin_memory().to(self.gpu, non_blocking=True)
-        #batch['gt'] = torch.tensor(gt).pin_memory().to(self.gpu, non_blocking=True)
-        batch['image'] = image
-        batch['gt'] = gt
+        batch['data'] = np.transpose(batch['data'], [2, 0, 1])
+        batch['gt'] = batch['gt'][None, ...]
         return batch
 
 class Transform(object):
     def __init__(self, phase, is_depth=False):
         if phase == 'train':
-            self.transforms = T.Compose([RandomColor(), Resize(config.dataset.scale), 
-                               RandomFlip(), Normalize(), ToTensor()]
-)
+            self.transforms = T.Compose([RandomColor(config.train.augment.brightness, 
+                                                     config.train.augment.contrast, 
+                                                     config.train.augment.saturation), 
+                                         ToArray(), CenterCrop(config.dataset.crop_size), 
+                                         Resize(config.train.augment.min_size, 
+                                                config.train.augment.max_size), 
+                                         RandomFlip(), Normalize(config.network.pixel_mean), HWC2CHW()])
         else:
-            self.transforms = T.Compose([Resize(config.dataset.scale), Normalize(), ToTensor()])
+            self.transforms = T.Compose([ToArray(), CenterCrop(config.dataset.crop_size), 
+                                         Resize(config.test.augment.min_size, 
+                                                config.test.augment.max_size), 
+                                         Normalize(config.network.pixel_mean), HWC2CHW()])
 
     def __call__(self, batch):
         batch = self.transforms(batch)

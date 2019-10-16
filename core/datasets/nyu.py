@@ -21,10 +21,35 @@ class NYU(Dataset):
     def __getitem__(self, idx):
         im_name, gt_name = self.im_list[idx]
         image = Image.open(os.path.join(self.data_path, im_name))
-        gt = np.load(os.path.join(self.data_path, gt_name))
-        if len(gt.shape) == 3:
-            gt = gt[..., 0]
-        gt[gt<=0.1] = -1
-        batch = {'image': image, 'gt': gt}
+        gt = Image.open(os.path.join(self.data_path, gt_name))
+        batch = {'data': image, 'gt': gt}
         batch = self.transform(batch)
         return batch
+
+    def collate(self, batch):
+        blob = dict()
+        for key in batch[0]:
+            if key == 'data':
+                blob['data'] = torch.from_numpy(self.im_list_to_blob([b['data'] for b in batch]))
+            elif key == 'gt':
+                blob['gt'] = torch.from_numpy(self.im_list_to_blob([b['gt'] for b in batch], 1, -1.0))
+            elif key == 'im_info':
+                blob['im_info'] = np.array([b['im_info'] for b in batch])
+            else:
+                raise ValueError('Unknown batch key: %s'%key)
+        return blob
+
+    def im_list_to_blob(self, ims, num_channels=3, default_value=0.0):
+        max_shape = np.array([im.shape for im in ims]).max(axis=0)
+        stride = float(config.network.stride)
+        max_shape[1] = int(np.ceil(max_shape[1] / stride) * stride)
+        max_shape[2] = int(np.ceil(max_shape[2] / stride) * stride)
+
+        num_images = len(ims)
+        blob = default_value * np.ones((num_images, num_channels, max_shape[1], max_shape[2]), dtype=np.float32)
+        for i in range(num_images):
+            im = ims[i]             
+            blob[i, :, 0:im.shape[1], 0:im.shape[2]] = im
+        return blob
+
+

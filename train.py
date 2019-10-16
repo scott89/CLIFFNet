@@ -13,7 +13,7 @@ def _display_process(img, rgb=False, gt=None):
     img = img.detach().cpu().numpy()
     img = img[0]
     if rgb:
-        img += config.train.augment.pixel_mean.reshape((-1, 1, 1))
+        img += config.network.pixel_mean.reshape((-1, 1, 1))
         img = img[-1::-1].astype(np.uint8)
     else:
         if gt is None:
@@ -59,27 +59,28 @@ def train():
         net.module.res_backbone.load_state_dict(state_dict, strict=False)
     
     for epoch in range(begin_epoch, config.train.max_epoch):
-        net, optimizer = adjust_lr(epoch, net, optimizer, best_epoch)
         np.random.seed()
         net.module.set_stage('train')
         for batch_id, batch in enumerate(train_loader):
+            lr = adjust_lr(config.train.lr, global_step, config.train.lr_decay_iterations)
             optimizer.zero_grad()
             # train loop
-            image = batch['image'].pin_memory().to(config.gpu[0])
+            image = batch['data'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             prediction = net(image)
             loss = l1_loss(gt, prediction)
             loss.backward()
-            optimizer.step()
+            optimizer.step(lr)
             
             if global_step % config.train.display_iter == 0 and global_step != 0:
-                print('Epoch: %d/%d, Batch ID: %d/%d, Loss: %f'%
-                      (epoch, config.train.max_epoch, batch_id, len(train_loader), loss.item()))
+                print('Epoch: %d/%d, Iteration: %d, Batch ID: %d/%d, Loss: %f'%
+                      (epoch, config.train.max_epoch, global_step, batch_id, len(train_loader), loss.item()))
             if global_step % config.train.summary_iter == 0 and global_step != 0:
                 train_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
                 train_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
                 train_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
                 train_summary_op.add_scalar('l1_loss', loss.item(), global_step=global_step)
+                train_summary_op.add_scalar('lr', lr, global_step=global_step)
 
             global_step += 1
 
@@ -88,7 +89,7 @@ def train():
         SE = 0
         net.module.set_stage('eval')
         for batch in val_loader:
-            image = batch['image'].pin_memory().to(config.gpu[0])
+            image = batch['data'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             with torch.no_grad():
                 prediction = net(image)

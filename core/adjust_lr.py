@@ -3,19 +3,18 @@ from os.path import join
 from core.config import config
 from core.build_optimizer import build_optimizer
 
-def adjust_lr(epoch, net, opt, best_epoch):
-    if epoch < config.train.warmup_epoch:
-        opt.set_lr(lr = config.train.warmup_lr)
-    elif epoch == config.train.warmup_epoch:
-        opt.set_lr(lr = config.train.lr)
-    elif (epoch%config.train.lr_decay_epoch == 0) and (epoch != 0):
-        ckpt = torch.load(
-            join(config.train.output_path, 'epoch-%d.pth'%best_epoch), 
-            map_location = config.gpu[0])
-        net.load_state_dict(ckpt['model_state_dict'])
-        opt = build_optimizer(net)
-        #opt.decay_lr(factor = config.train.lr_decay_rate**(epoch/config.train.lr_decay_epoch))
-        lr = config.train.lr * config.train.lr_decay_rate**(epoch/config.train.lr_decay_epoch)
-        opt.set_lr(lr = lr)
-    return net, opt
 
+
+def get_step_index(it, decay_iterations):
+    for idx, decay_iteration in enumerate(decay_iterations):
+        if it < decay_iteration:
+            return idx
+    return len(decay_iterations)
+
+
+
+def adjust_lr(base_lr, it, decay_iterations):
+    if it <= config.train.warmup_it:
+        alpha = 1.0 * it / config.train.warmup_it
+        return base_lr * (1 / 10.0 * (1 - alpha) + alpha)
+    return base_lr * (0.1 ** get_step_index(it, decay_iterations))
