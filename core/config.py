@@ -50,7 +50,7 @@ config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 config.test = edict()
 config.test.batch_size = 1
 config.test.augment = edict()
-config.test.augment.min_size = [427]
+config.test.augment.min_size = [228]
 config.test.augment.max_size = [512]
 
 
