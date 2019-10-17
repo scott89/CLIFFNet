@@ -48,7 +48,7 @@ def train():
         net.load_state_dict(ckpt['model_state_dict'])
         optimizer.load_state_dict(ckpt['optimizer_state_dict'])
         begin_epoch = ckpt['epoch'] + 1
-        global_step = ckpt['global_step'] + 1
+        global_step = ckpt['global_step']
         best_loss = ckpt['loss']
         best_epoch = ckpt['epoch']
     elif config.train.pretrained:
@@ -62,7 +62,7 @@ def train():
         np.random.seed()
         net.module.set_stage('train')
         for batch_id, batch in enumerate(train_loader):
-            lr = adjust_lr(config.train.lr, global_step, config.train.lr_decay_iterations)
+            lr = adjust_lr(config.train.lr, global_step, config.train.lr_decay_iterations, optimizer)
             optimizer.zero_grad()
             # train loop
             image = batch['data'].pin_memory().to(config.gpu[0])
