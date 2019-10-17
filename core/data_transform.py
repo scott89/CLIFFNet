@@ -126,7 +126,7 @@ class Transform(object):
             self.transforms = T.Compose([RandomColor(config.train.augment.brightness, 
                                                      config.train.augment.contrast, 
                                                      config.train.augment.saturation), 
-                                         RandomRotate(config.train.augment.rotation),
+                                         #RandomRotate(config.train.augment.rotation),
                                          ToArray(), CenterCrop(config.dataset.crop_size), 
                                          Resize(config.train.augment.min_size, 
                                                 config.train.augment.max_size,
