@@ -12,7 +12,7 @@ class NYU(Dataset):
     def __init__(self, data_file, phase):
         self.data_path = config.dataset.data_path
         self.phase = phase
-        self.im_list = np.load(os.path.join(self.data_path, data_file))
+        self.im_list = np.load(os.path.join(self.data_path, data_file), allow_pickle=True)
         self.transform = Transform(phase, is_depth=True)
 
     def __len__(self):
