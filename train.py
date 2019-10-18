@@ -68,7 +68,7 @@ def train():
             image = batch['data'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             prediction = net(image)
-            loss = huber_loss(gt, prediction)
+            loss = huber_loss(gt, prediction, 0.2)
             loss.backward()
             optimizer.step(lr)
             
@@ -93,7 +93,7 @@ def train():
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             with torch.no_grad():
                 prediction = net(image)
-            cur_loss = huber_loss(gt, prediction)
+            cur_loss = l1_loss(gt, prediction)
             cur_se = l2_loss(gt, prediction)
             loss += cur_loss.item()
             SE += cur_se.item()

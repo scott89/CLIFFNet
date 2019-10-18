@@ -31,7 +31,7 @@ config.train.augment.max_size = [512]
 config.train.augment.rotation = 5
 
 config.train.batch_size = 8
-config.train.lr = 1e-3
+config.train.lr = 5e-3
 config.train.lr_decay_iterations = [160000, 320000, 480000]
 config.train.warmup_it = 2000
 config.train.momentum = 0.9
