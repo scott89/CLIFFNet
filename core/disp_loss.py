@@ -22,3 +22,15 @@ def huber_loss(gt, pre, delta=0.5):
     loss = torch.mean(loss)
     return loss
     
+
+def log_loss(gt, pre, a=1/3.0, b=1/2.0, thr=0.1):
+    pre = pre[gt>=0]
+    gt = gt[gt>=0]
+    diff = torch.abs(gt - pre)
+    loss = torch.log(a*(diff+b))
+    valid_flag = diff>thr
+    loss = loss[valid_flag]
+    loss = torch.mean(loss)
+    return loss
+
+

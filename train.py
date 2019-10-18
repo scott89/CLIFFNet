@@ -6,7 +6,7 @@ from core.build_dataset import build_dataset
 from core.build_network import build_network
 from core.build_optimizer import build_optimizer
 from core.build_summary_op import build_summary_op
-from core.disp_loss import l1_loss, l2_loss, huber_loss
+from core.disp_loss import l1_loss, l2_loss, huber_loss, log_loss
 from core.adjust_lr import adjust_lr
 
 def _display_process(img, rgb=False, gt=None):
@@ -68,7 +68,7 @@ def train():
             image = batch['data'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             prediction = net(image)
-            loss = huber_loss(gt, prediction, 0.2)
+            loss = log_loss(gt, prediction)
             loss.backward()
             optimizer.step(lr)
             
@@ -79,7 +79,7 @@ def train():
                 train_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
                 train_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
                 train_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
-                train_summary_op.add_scalar('huber_loss', loss.item(), global_step=global_step)
+                train_summary_op.add_scalar('log_loss', loss.item(), global_step=global_step)
                 train_summary_op.add_scalar('lr', lr, global_step=global_step)
 
             global_step += 1
@@ -102,7 +102,7 @@ def train():
         val_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
         val_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
         val_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
-        val_summary_op.add_scalar('huber_loss', loss, global_step=global_step)
+        val_summary_op.add_scalar('l1_loss', loss, global_step=global_step)
         val_summary_op.add_scalar('MSE', MSE, global_step=global_step)
         print("Epoch: %d, Val Loss: %f Best Loss: %s, MSE: %f"%(epoch, loss, str(best_loss), MSE))
 

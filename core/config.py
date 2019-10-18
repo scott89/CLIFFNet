@@ -31,7 +31,7 @@ config.train.augment.max_size = [512]
 config.train.augment.rotation = 5
 
 config.train.batch_size = 8
-config.train.lr = 5e-3
+config.train.lr = 1e-3
 config.train.lr_decay_iterations = [160000, 320000, 480000]
 config.train.warmup_it = 2000
 config.train.momentum = 0.9
@@ -40,7 +40,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.3.3/'
+config.train.output_path = 'models/nyu_v1.3.4/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.3/epoch-20.pth'
