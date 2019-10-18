@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 def l1_loss(gt, pre):
     valid_mask = (gt>=0).float()
@@ -33,4 +34,22 @@ def log_loss(gt, pre, a=1/3.0, b=1/2.0, thr=0.1):
     loss = torch.mean(loss)
     return loss
 
+def compute_metrics(gt, pre, delta):
+    gt = gt.detach().cpu().numpy()
+    pre = pre.detach().cpu().numpy()
+    pre = pre[gt>=0]
+    gt = gt[gt>=0]
+    abs_diff = np.abs(gt - pre)
+    rms = np.mean(abs_diff**2)
+    gt[gt==0] += 0.001
+    pre[pre==0] += 0.001
+    rel = np.mean(abs_diff / gt)
+    rms_log10 = np.mean(np.abs(np.log10(pre) - np.log10(gt)))
+    r1 = pre / gt
+    r2 = gt / pre
+    r = np.maximum(r1, r2)
+    precision = []
+    for d in delta:
+        precision.append(np.mean(np.float32(r < d)))
+    return rms, rel, rms_log10, precision
 

@@ -7,6 +7,7 @@ from core.build_network import build_network
 from core.build_optimizer import build_optimizer
 from core.build_summary_op import build_summary_op
 from core.disp_loss import l1_loss, l2_loss, huber_loss, log_loss
+from core.disp_loss import compute_metrics
 from core.adjust_lr import adjust_lr
 
 def _display_process(img, rgb=False, gt=None):
@@ -40,7 +41,7 @@ def train():
 
     begin_epoch = 0
     global_step = 0
-    best_loss = None
+    best_p1 = None
     best_epoch = 0
     # resmue model
     if config.train.resume:
@@ -49,7 +50,8 @@ def train():
         optimizer.load_state_dict(ckpt['optimizer_state_dict'])
         begin_epoch = ckpt['epoch'] + 1
         global_step = ckpt['global_step']
-        best_loss = ckpt['loss']
+        if ckpt.has_key('p1'):
+            best_p1 = ckpt['p1']
         best_epoch = ckpt['epoch']
     elif config.train.pretrained:
         ckpt = torch.load(config.train.snapshot, map_location = config.gpu[0])
@@ -62,6 +64,10 @@ def train():
         np.random.seed()
         net.module.set_stage('train')
         for batch_id, batch in enumerate(train_loader):
+            if global_step in config.train.lr_decay_iterations:
+                ckpt = torch.load(os.path.join(config.train.output_path, 'epoch-%d.pth'%(best_epoch)), map_location = config.gpu[0])
+                net.load_state_dict(ckpt['model_state_dict'])
+                optimizer.load_state_dict(ckpt['optimizer_state_dict'])
             lr = adjust_lr(config.train.lr, global_step, config.train.lr_decay_iterations, optimizer)
             optimizer.zero_grad()
             # train loop
@@ -85,39 +91,53 @@ def train():
             global_step += 1
 
 
-        loss = 0
-        SE = 0
+        rms, rel, rms_log10, p1, p2, p3 = 0, 0, 0, 0, 0, 0
+
         net.module.set_stage('eval')
         for batch in val_loader:
             image = batch['data'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             with torch.no_grad():
                 prediction = net(image)
-            cur_loss = l1_loss(gt, prediction)
-            cur_se = l2_loss(gt, prediction)
-            loss += cur_loss.item()
-            SE += cur_se.item()
-        loss /= len(val_loader)
-        MSE = (SE /len(val_loader))**0.5
+            metrics = compute_metrics(gt, prediction, [1.25, 1.25**2, 1.25**3])
+            rms += metrics[0]
+            rel += metrics[1]
+            rms_log10 += metrics[2]
+            p1 += metrics[3][0]
+            p2 += metrics[3][1]
+            p3 += metrics[3][2]
+        rms = (rms / len(val_loader))**0.5
+        rel /= len(val_loader)
+        rms_log10 /= len(val_loader)
+        p1 /= len(val_loader)
+        p2 /= len(val_loader)
+        p3 /= len(val_loader)
         val_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
         val_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
         val_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
-        val_summary_op.add_scalar('l1_loss', loss, global_step=global_step)
-        val_summary_op.add_scalar('MSE', MSE, global_step=global_step)
-        print("Epoch: %d, Val Loss: %f Best Loss: %s, MSE: %f"%(epoch, loss, str(best_loss), MSE))
+        val_summary_op.add_scalar('rms', rms, global_step=global_step)
+        val_summary_op.add_scalar('rel', rel, global_step=global_step)
+        val_summary_op.add_scalar('rms_log10', rms_log10, global_step=global_step)
+        val_summary_op.add_scalar('p1', p1, global_step=global_step)
+        val_summary_op.add_scalar('p2', p2, global_step=global_step)
+        val_summary_op.add_scalar('p3', p3, global_step=global_step)
 
-        if best_loss is None or loss <= best_loss:
-            best_loss = loss
+
+        print("Epoch: %d, Val rms: %f, rel: %f, rms_log10: %f, \
+              p1: %f, p2: %f, p3: %f"%(epoch, rms, rel, rms_log10, p1, p2, p3))
+
+        if best_p1 is None or best_p1 <= p1:
+            best_p1 = p1
             best_epoch = epoch
 
-            torch.save({
-                'epoch': epoch,
-                'global_step': global_step,
-                'model_state_dict': net.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'loss': loss,
-                'config': config
-            }, os.path.join(config.train.output_path, 'epoch-%d.pth'%epoch))
+        torch.save({
+            'epoch': epoch,
+            'global_step': global_step,
+            'model_state_dict': net.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'p1': p1,
+            'config': config
+        }, os.path.join(config.train.output_path, 'epoch-%d.pth'%epoch))
     
 
 if __name__ == '__main__':

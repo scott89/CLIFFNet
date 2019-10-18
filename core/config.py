@@ -42,8 +42,8 @@ config.train.display_iter = 20
 config.train.summary_iter = 100
 config.train.output_path = 'models/nyu_v1.3.4/'
 
-config.train.resume = False
-config.train.snapshot = 'models/nyu_v1.3/epoch-20.pth'
+config.train.resume = True
+config.train.snapshot = 'models/nyu_v1.3.4/epoch-13.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 
