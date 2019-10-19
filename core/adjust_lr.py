@@ -18,6 +18,9 @@ def adjust_lr(base_lr, it, decay_iterations, optimizer):
         alpha = 1.0 * it / config.train.warmup_it
         return base_lr * (1 / 10.0 * (1 - alpha) + alpha)
     if it in decay_iterations:
-        for k in optimizer.state_dict()['state'].keys():
-            optimizer.state_dict()['state'][k]['momentum_buffer'].div_(10)
+        try:
+            for k in optimizer.state_dict()['state'].keys():
+                optimizer.state_dict()['state'][k]['momentum_buffer'].div_(10)
+        except:
+            pass
     return base_lr * (0.1 ** get_step_index(it, decay_iterations))

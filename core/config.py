@@ -25,14 +25,14 @@ config.train.augment = edict()
 config.train.augment.brightness = 0.2
 config.train.augment.contrast = 0.2
 config.train.augment.saturation = 0.2
-config.train.augment.min_size = [224, 232, 240, 216, 208]
+config.train.augment.min_size = [224] #[224, 232, 240, 216, 208]
 config.train.augment.canonical_size = 224
 config.train.augment.max_size = [512]
 config.train.augment.rotation = 5
 
 config.train.batch_size = 8
-config.train.lr = 1e-3
-config.train.lr_decay_iterations = [32000, 64000, 96000]
+config.train.lr = 1e-4
+config.train.lr_decay_iterations = [50000, 100000, 150000]
 config.train.warmup_it = 2000
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
@@ -40,7 +40,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.3.4_grad/'
+config.train.output_path = 'models/nyu_v1.3.4_grad_adam/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.3.4/epoch-13.pth'
