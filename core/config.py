@@ -32,7 +32,7 @@ config.train.augment.rotation = 5
 
 config.train.batch_size = 8
 config.train.lr = 1e-3
-config.train.lr_decay_iterations = [160000, 320000, 480000]
+config.train.lr_decay_iterations = [32000, 64000, 96000]
 config.train.warmup_it = 2000
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
@@ -40,9 +40,9 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_v1.3.4/'
+config.train.output_path = 'models/nyu_v1.3.4_grad/'
 
-config.train.resume = True
+config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.3.4/epoch-13.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'

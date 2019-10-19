@@ -9,6 +9,7 @@ from core.build_summary_op import build_summary_op
 from core.disp_loss import l1_loss, l2_loss, huber_loss, log_loss
 from core.disp_loss import compute_metrics
 from core.adjust_lr import adjust_lr
+from core.sobel import Sobel
 
 def _display_process(img, rgb=False, gt=None):
     img = img.detach().cpu().numpy()
@@ -59,7 +60,7 @@ def train():
     elif config.train.pretrained_backbone is not None:
         state_dict = net.module.res_backbone.modify_state_dict_keys(torch.load(config.train.pretrained_backbone, map_location = config.gpu[0]))
         net.module.res_backbone.load_state_dict(state_dict, strict=False)
-    
+    get_gradient = Sobel().to(config.gpu[0]) 
     for epoch in range(begin_epoch, config.train.max_epoch):
         np.random.seed()
         net.module.set_stage('train')
@@ -75,6 +76,9 @@ def train():
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             prediction = net(image)
             loss = log_loss(gt, prediction)
+            prediction_g = get_gradient(prediction)
+            gt_g = get_gradient(gt)
+            loss += 2*log_loss(gt_g, prediction_g, thr=-10, remove_negative=False)
             loss.backward()
             optimizer.step(lr)
             
