@@ -14,7 +14,7 @@ config.dataset.val_data_file = 'test_list.p'
 config.dataset.crop_size = [432, 580]
 
 config.network = edict()
-config.network.backbone_fix_bn = True
+config.network.backbone_fix_bn = False
 config.network.backbone_with_dilation = False
 config.network.backbone_freeze_at = 0
 config.network.pixel_mean = np.array((102.9801, 115.9465, 122.7717,))
@@ -43,7 +43,7 @@ config.train.summary_iter = 100
 config.train.output_path = 'models/nyu_v1.3.4_grad_adam/'
 
 config.train.resume = False
-config.train.snapshot = 'models/nyu_v1.3.4/epoch-13.pth'
+config.train.snapshot = 'models/nyu_v1.3.4_grad_adam/epoch-4.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 

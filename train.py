@@ -78,7 +78,7 @@ def train():
             loss = log_loss(gt, prediction)
             prediction_g = get_gradient(prediction)
             gt_g = get_gradient(gt)
-            loss += 2*log_loss(gt_g, prediction_g, thr=-10, remove_negative=False)
+            loss += 2*log_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1), thr=-10, remove_negative=False)
             loss.backward()
             optimizer.step(lr)
             

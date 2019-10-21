@@ -24,10 +24,12 @@ def huber_loss(gt, pre, delta=0.5):
     return loss
     
 
-def log_loss(gt, pre, a=1.0, b=1/2.0, thr=0, remove_negative=True):
+def log_loss(gt, pre, mask=None, a=1.0, b=1/2.0, thr=0, remove_negative=True):
+    if mask is None:
+        mask = gt
     if remove_negative:
-        pre = pre[gt>=0]
-        gt = gt[gt>=0]
+        pre = pre[mask>=0]
+        gt = gt[mask>=0]
     diff = torch.abs(gt - pre)
     loss = torch.log(a*(diff+b))
     valid_flag = diff>thr
