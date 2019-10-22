@@ -24,15 +24,20 @@ class NYU(Dataset):
         gt = Image.open(os.path.join(self.data_path, gt_name))
         batch = {'data': image, 'gt': gt}
         batch = self.transform(batch)
+        if self.phase == 'train':
+            batch['gt'] = cv2.resize(batch['gt'][0], None, None, 0.5, 0.5, interpolation=cv2.INTER_LINEAR)
+            batch['gt'] = batch['gt'][None, ...]
         return batch
 
     def collate(self, batch):
         blob = dict()
         for key in batch[0]:
             if key == 'data':
-                blob['data'] = torch.from_numpy(self.im_list_to_blob([b['data'] for b in batch]))
+                #blob['data'] = torch.from_numpy(self.im_list_to_blob([b['data'] for b in batch]))
+                blob['data'] = torch.from_numpy(np.stack([b['data'] for b in batch], 0))
             elif key == 'gt':
-                blob['gt'] = torch.from_numpy(self.im_list_to_blob([b['gt'] for b in batch], 1, -1.0))
+                #blob['gt'] = torch.from_numpy(self.im_list_to_blob([b['gt'] for b in batch], 1, -1.0))
+                blob['gt'] = torch.from_numpy(np.stack([b['gt'] for b in batch], 0))
             elif key == 'im_info':
                 blob['im_info'] = np.array([b['im_info'] for b in batch])
             else:

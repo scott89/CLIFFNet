@@ -16,7 +16,7 @@ def build_dataset(phase):
     data_loader = DataLoader(dataset, 
                              batch_size=batch_size, 
                              shuffle=phase=='train', 
-                             num_workers=4, 
+                             num_workers=10, 
                              collate_fn=dataset.collate)
     return data_loader
     #return dataset

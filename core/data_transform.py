@@ -62,8 +62,8 @@ class CenterCrop(object):
         image = batch['data']
         gt = batch['gt']
         h, w = gt.shape
-        y1 = int(round(h - self.crop_size[0]))
-        x1 = int(round(w - self.crop_size[1]))
+        y1 = int(round((h - self.crop_size[0])/2))
+        x1 = int(round((w - self.crop_size[1])/2))
         image = image[y1:y1+self.crop_size[0], x1:x1+self.crop_size[1]]
         gt = gt[y1:y1+self.crop_size[0], x1:x1+self.crop_size[1]]
         batch['data'] = image
@@ -126,17 +126,19 @@ class Transform(object):
             self.transforms = T.Compose([RandomColor(config.train.augment.brightness, 
                                                      config.train.augment.contrast, 
                                                      config.train.augment.saturation), 
-                                         #RandomRotate(config.train.augment.rotation),
-                                         ToArray(), CenterCrop(config.dataset.crop_size), 
+                                         RandomRotate(config.train.augment.rotation),
+                                         ToArray(), 
                                          Resize(config.train.augment.min_size, 
                                                 config.train.augment.max_size,
                                                 config.train.augment.canonical_size), 
+                                         CenterCrop(config.dataset.crop_size), 
                                          RandomFlip(), Normalize(config.network.pixel_mean), HWC2CHW()])
         else:
-            self.transforms = T.Compose([ToArray(), CenterCrop(config.dataset.crop_size), 
+            self.transforms = T.Compose([ToArray(),  
                                          Resize(config.test.augment.min_size, 
                                                 config.test.augment.max_size,
                                                 config.test.augment.canonical_size), 
+                                         CenterCrop(config.dataset.crop_size),
                                          Normalize(config.network.pixel_mean), HWC2CHW()])
 
     def __call__(self, batch):

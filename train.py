@@ -10,6 +10,8 @@ from core.disp_loss import l1_loss, l2_loss, huber_loss, log_loss
 from core.disp_loss import compute_metrics
 from core.adjust_lr import adjust_lr
 from core.sobel import Sobel
+from torch.backends import cudnn
+cudnn.benchmark = True
 
 def _display_process(img, rgb=False, gt=None):
     img = img.detach().cpu().numpy()
@@ -74,6 +76,7 @@ def train():
             # train loop
             image = batch['data'].pin_memory().to(config.gpu[0])
             gt = batch['gt'].pin_memory().to(config.gpu[0])
+            
             prediction = net(image)
             loss = log_loss(gt, prediction)
             prediction_g = get_gradient(prediction)
@@ -103,6 +106,7 @@ def train():
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             with torch.no_grad():
                 prediction = net(image)
+            prediction = torch.nn.functional.interpolate(prediction, scale_factor=2, mode='bilinear')
             metrics = compute_metrics(gt, prediction, [1.25, 1.25**2, 1.25**3])
             rms += metrics[0]
             rel += metrics[1]
