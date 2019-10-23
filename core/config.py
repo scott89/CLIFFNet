@@ -40,7 +40,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/reimpl_v2/'
+config.train.output_path = 'models/reimpl_v3/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.3.4_grad_adam/epoch-4.pth'
