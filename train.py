@@ -78,10 +78,10 @@ def train():
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             
             prediction = net(image)
-            loss = log_loss(gt, prediction)
+            loss = l1_loss(gt, prediction)
             prediction_g = get_gradient(prediction)
             gt_g = get_gradient(gt)
-            loss += 2*log_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1), thr=-10, remove_negative=False)
+            loss += 2*l1_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1))
             loss.backward()
             optimizer.step(lr)
             
@@ -92,7 +92,7 @@ def train():
                 train_summary_op.add_image('image', _display_process(image,rgb=True), global_step=global_step)
                 train_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
                 train_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
-                train_summary_op.add_scalar('log_loss', loss.item(), global_step=global_step)
+                train_summary_op.add_scalar('l1_loss', loss.item(), global_step=global_step)
                 train_summary_op.add_scalar('lr', lr, global_step=global_step)
 
             global_step += 1

@@ -1,9 +1,12 @@
 import torch
 import numpy as np
 
-def l1_loss(gt, pre):
-    valid_mask = (gt>=0).float()
-    loss = torch.sum(torch.abs(gt - pre) * valid_mask) / (torch.sum(valid_mask) + 1e-6)
+def l1_loss(gt, pre, mask=None):
+    if mask is None:
+        mask = gt
+    pre = pre[mask>=0]
+    gt = gt[mask>=0]
+    loss = torch.mean(torch.abs(gt - pre))
     return loss
 
 def l2_loss(gt, pre):
@@ -24,12 +27,11 @@ def huber_loss(gt, pre, delta=0.5):
     return loss
     
 
-def log_loss(gt, pre, mask=None, a=1.0, b=1/2.0, thr=0, remove_negative=True):
+def log_loss(gt, pre, mask=None, a=1.0, b=1/2.0, thr=0):
     if mask is None:
         mask = gt
-    if remove_negative:
-        pre = pre[mask>=0]
-        gt = gt[mask>=0]
+    pre = pre[mask>=0]
+    gt = gt[mask>=0]
     diff = torch.abs(gt - pre)
     loss = torch.log(a*(diff+b))
     valid_flag = diff>thr
