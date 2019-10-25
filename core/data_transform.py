@@ -64,6 +64,17 @@ class CenterCrop(object):
         h, w = gt.shape
         y1 = int(round((h - self.crop_size[0])/2))
         x1 = int(round((w - self.crop_size[1])/2))
+        pad_y, pad_x = 0, 0
+        if y1 < 0:
+            pad_y = -y1
+            y1 = 0
+        if x1 < 0:
+            pad_x = -x1
+            x1 = 0
+        if pad_y>0 or pad_x > 0:
+            image = np.pad(image, [[pad_y, pad_y], [pad_x, pad_x], [0,0]], mode='constant', constant_values=0)
+            gt = np.pad(gt, [[pad_y, pad_y], [pad_x, pad_x]], mode='constant', constant_values=-5)
+
         image = image[y1:y1+self.crop_size[0], x1:x1+self.crop_size[1]]
         gt = gt[y1:y1+self.crop_size[0], x1:x1+self.crop_size[1]]
         batch['data'] = image
@@ -131,15 +142,17 @@ class Transform(object):
                                          Resize(config.train.augment.min_size, 
                                                 config.train.augment.max_size,
                                                 config.train.augment.canonical_size), 
+                                         Normalize(config.network.pixel_mean),
                                          CenterCrop(config.dataset.crop_size), 
-                                         RandomFlip(), Normalize(config.network.pixel_mean), HWC2CHW()])
+                                         RandomFlip(),  HWC2CHW()])
         else:
             self.transforms = T.Compose([ToArray(),  
                                          Resize(config.test.augment.min_size, 
                                                 config.test.augment.max_size,
                                                 config.test.augment.canonical_size), 
+                                         Normalize(config.network.pixel_mean),
                                          CenterCrop(config.dataset.crop_size),
-                                         Normalize(config.network.pixel_mean), HWC2CHW()])
+                                         HWC2CHW()])
 
     def __call__(self, batch):
         batch = self.transforms(batch)
