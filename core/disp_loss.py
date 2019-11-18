@@ -45,11 +45,11 @@ def compute_metrics(gt, pre, delta):
     pre = pre[gt>=0]
     gt = gt[gt>=0]
     abs_diff = np.abs(gt - pre)
-    rms = np.mean(abs_diff**2)
+    rms = (np.mean(abs_diff**2))**0.5
     gt[gt==0] += 0.001
     pre[pre==0] += 0.001
     rel = np.mean(abs_diff / gt)
-    rms_log10 = np.mean(np.abs(np.log10(pre) - np.log10(gt)))
+    rms_log10 = (np.mean(np.abs(np.log(pre) - np.log(gt))**2))**0.5
     r1 = pre / gt
     r2 = gt / pre
     r = np.maximum(r1, r2)

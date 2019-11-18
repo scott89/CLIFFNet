@@ -114,7 +114,7 @@ def train():
             p1 += metrics[3][0]
             p2 += metrics[3][1]
             p3 += metrics[3][2]
-        rms = (rms / len(val_loader))**0.5
+        rms = (rms / len(val_loader))
         rel /= len(val_loader)
         rms_log10 /= len(val_loader)
         p1 /= len(val_loader)
