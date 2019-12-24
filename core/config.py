@@ -8,10 +8,10 @@ config = edict()
 
 config.dataset = edict()
 config.dataset.name = 'NYU'
-config.dataset.data_path = '/media/4TB/Research/DataSet/NYU2/data_ori/'
-config.dataset.train_data_file = 'train_list.p'
-config.dataset.val_data_file = 'test_list.p'
-config.dataset.crop_size = [228, 304]
+config.dataset.data_path = '/media/4TB/Research/DataSet/NYU2/'
+config.dataset.train_data_file = 'train_40k.p'
+config.dataset.val_data_file = 'test.p'
+#config.dataset.crop_size = [228, 304]
 
 config.network = edict()
 config.network.backbone_fix_bn = False
@@ -25,14 +25,14 @@ config.train.augment = edict()
 config.train.augment.brightness = 0.4
 config.train.augment.contrast = 0.4
 config.train.augment.saturation = 0.4
-config.train.augment.min_size = [240]
-config.train.augment.canonical_size = 240
+config.train.augment.min_size = [320]
+config.train.augment.canonical_size = 320
 config.train.augment.max_size = [512]
 config.train.augment.rotation = 5
 
 config.train.batch_size = 8
 config.train.lr = 1e-4
-config.train.lr_decay_iterations = [40000, 80000, 120000]
+config.train.lr_decay_iterations = [80000, 120000, 160000]
 config.train.warmup_it = -1
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
@@ -40,7 +40,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/reimpl_v3_l1/'
+config.train.output_path = 'models/nyu_base_v1.0/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_v1.3.4_grad_adam/epoch-4.pth'
@@ -50,8 +50,8 @@ config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 config.test = edict()
 config.test.batch_size = 1
 config.test.augment = edict()
-config.test.augment.min_size = [240]
-config.test.augment.canonical_size = 240
+config.test.augment.min_size = [320]
+config.test.augment.canonical_size = 320
 config.test.augment.max_size = [512]
 
 

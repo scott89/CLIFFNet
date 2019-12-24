@@ -19,7 +19,7 @@ class NYU(Dataset):
         return len(self.im_list)
 
     def __getitem__(self, idx):
-        im_name, gt_name = self.im_list[idx]
+        im_name, gt_name = self.im_list[idx][:2]
         image = Image.open(os.path.join(self.data_path, im_name))
         gt = Image.open(os.path.join(self.data_path, gt_name))
         batch = {'data': image, 'gt': gt}

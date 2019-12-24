@@ -52,7 +52,7 @@ class ToArray(object):
 
     def __call__(self, batch):
         image = np.array(batch['data']).astype(np.float32)
-        gt = np.array(batch['gt']).astype(np.float32) / 255.0 * 10.0
+        gt = np.array(batch['gt']).astype(np.float32) / 65535.0 * 10.0
         if len(image.shape) == 3:
             image = image[:, :, -1::-1]       
         else:
@@ -156,7 +156,7 @@ class Transform(object):
                                                 config.train.augment.max_size,
                                                 config.train.augment.canonical_size), 
                                          Normalize(config.network.pixel_mean),
-                                         CenterCrop(config.dataset.crop_size), 
+                                         #CenterCrop(config.dataset.crop_size), 
                                          RandomFlip(),  HWC2CHW()])
         else:
             self.transforms = T.Compose([ToArray(),  
@@ -164,7 +164,7 @@ class Transform(object):
                                                 config.test.augment.max_size,
                                                 config.test.augment.canonical_size), 
                                          Normalize(config.network.pixel_mean),
-                                         CenterCrop(config.dataset.crop_size),
+                                         #CenterCrop(config.dataset.crop_size),
                                          HWC2CHW()])
 
     def __call__(self, batch):

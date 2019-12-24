@@ -79,9 +79,9 @@ def train():
             
             prediction = net(image)
             loss = l1_loss(gt, prediction)
-            prediction_g = get_gradient(prediction)
-            gt_g = get_gradient(gt)
-            loss += 2*l1_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1))
+            #prediction_g = get_gradient(prediction)
+            #gt_g = get_gradient(gt)
+            #loss += 2*l1_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1))
             loss.backward()
             optimizer.step(lr)
             
