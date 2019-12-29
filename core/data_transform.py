@@ -29,16 +29,16 @@ class RandomRotate(object):
             return batch
         image = batch['data']
         gt = batch['gt']
-        image -= self.pixel_mean
-        image = Image.fromarray(image)
+        image = Image.fromarray(np.uint8(image))
         gt = Image.fromarray(gt+1.0)
 
         degree = random.uniform(-self.max_degree, self.max_degree)
         image = T.functional.rotate(image, degree, resample=Image.BILINEAR)
         gt = T.functional.rotate(gt, degree, resample=Image.BILINEAR)
-        image = np.array(image, 'float')
-        image += self.pixel_mean
-        gt = np.array(gt, 'float')-1.0
+        image = np.array(image, np.float32)
+        gt = np.array(gt, np.float32)-1.0
+        mask = np.float32(gt >= 0)[...,None]
+        imagae = mask * image + (1-mask) * self.pixel_mean
         batch['data'] = image
         batch['gt'] = gt
         return batch
@@ -148,20 +148,20 @@ class Transform(object):
                                                      config.train.augment.contrast, 
                                                      config.train.augment.saturation), 
                                          ToArray(), 
-                                         RandomRotate(config.train.augment.rotation, config.network.pixel_mean[-1::-1]),
+                                         RandomRotate(config.train.augment.rotation, config.network.pixel_mean),
+                                         CenterCrop(config.dataset.crop_size), 
                                          Resize(config.train.augment.min_size, 
                                                 config.train.augment.max_size,
                                                 config.train.augment.canonical_size), 
                                          Normalize(config.network.pixel_mean),
-                                         CenterCrop(config.dataset.crop_size), 
                                          RandomFlip(),  HWC2CHW()])
         else:
             self.transforms = T.Compose([ToArray(),  
+                                         #CenterCrop(config.dataset.crop_size),
                                          Resize(config.test.augment.min_size, 
                                                 config.test.augment.max_size,
                                                 config.test.augment.canonical_size), 
                                          Normalize(config.network.pixel_mean),
-                                         CenterCrop(config.dataset.crop_size),
                                          HWC2CHW()])
 
     def __call__(self, batch):

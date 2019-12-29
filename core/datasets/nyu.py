@@ -25,7 +25,7 @@ class NYU(Dataset):
         batch = {'data': image, 'gt': gt}
         batch = self.transform(batch)
         if self.phase == 'train':
-            batch['gt'] = cv2.resize(batch['gt'][0], None, None, 0.5, 0.5, interpolation=cv2.INTER_LINEAR)
+            batch['gt'] = cv2.resize(batch['gt'][0], (batch['gt'].shape[2]/2, batch['gt'].shape[1]/2), interpolation=cv2.INTER_LINEAR)
             batch['gt'] = batch['gt'][None, ...]
         return batch
 

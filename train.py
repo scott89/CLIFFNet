@@ -106,7 +106,7 @@ def train():
             gt = batch['gt'].pin_memory().to(config.gpu[0])
             with torch.no_grad():
                 prediction = net(image)
-            prediction = torch.nn.functional.interpolate(prediction, scale_factor=2, mode='bilinear')
+                prediction = torch.nn.functional.interpolate(prediction, gt.shape[2:], mode='bilinear')
             metrics = compute_metrics(gt, prediction, [1.25, 1.25**2, 1.25**3])
             rms += metrics[0]
             rel += metrics[1]
