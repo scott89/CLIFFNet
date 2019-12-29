@@ -25,23 +25,20 @@ class RandomRotate(object):
         self.max_degree = max_degree
         self.pixel_mean = pixel_mean.reshape((1, 1, -1))
     def __call__(self, batch):
+        if self.max_degree <= 0:
+            return batch
         image = batch['data']
         gt = batch['gt']
-        image = np.array(image, 'float')
         image -= self.pixel_mean
         image = Image.fromarray(image)
-
-        gt = np.array(gt, 'float')
-        gt = Image.fromarray(gt+255)
+        gt = Image.fromarray(gt+1.0)
 
         degree = random.uniform(-self.max_degree, self.max_degree)
         image = T.functional.rotate(image, degree, resample=Image.BILINEAR)
         gt = T.functional.rotate(gt, degree, resample=Image.BILINEAR)
         image = np.array(image, 'float')
         image += self.pixel_mean
-        image = Image.fromarray(image)
-        gt = np.array(gt, 'float')
-        gt = Image.fromarray(gt-255)
+        gt = np.array(gt, 'float')-1.0
         batch['data'] = image
         batch['gt'] = gt
         return batch
@@ -150,13 +147,13 @@ class Transform(object):
             self.transforms = T.Compose([RandomColor(config.train.augment.brightness, 
                                                      config.train.augment.contrast, 
                                                      config.train.augment.saturation), 
-                                         #RandomRotate(config.train.augment.rotation, config.network.pixel_mean[-1::-1]),
                                          ToArray(), 
+                                         RandomRotate(config.train.augment.rotation, config.network.pixel_mean[-1::-1]),
                                          Resize(config.train.augment.min_size, 
                                                 config.train.augment.max_size,
                                                 config.train.augment.canonical_size), 
                                          Normalize(config.network.pixel_mean),
-                                         #CenterCrop(config.dataset.crop_size), 
+                                         CenterCrop(config.dataset.crop_size), 
                                          RandomFlip(),  HWC2CHW()])
         else:
             self.transforms = T.Compose([ToArray(),  
@@ -164,7 +161,7 @@ class Transform(object):
                                                 config.test.augment.max_size,
                                                 config.test.augment.canonical_size), 
                                          Normalize(config.network.pixel_mean),
-                                         #CenterCrop(config.dataset.crop_size),
+                                         CenterCrop(config.dataset.crop_size),
                                          HWC2CHW()])
 
     def __call__(self, batch):

@@ -42,6 +42,7 @@ def log_loss(gt, pre, mask=None, a=1.0, b=1/2.0, thr=0):
 def compute_metrics(gt, pre, delta):
     gt = gt.detach().cpu().numpy()
     pre = pre.detach().cpu().numpy()
+    pre = np.clip(pre, 0, 10)
     pre = pre[gt>=0]
     gt = gt[gt>=0]
     abs_diff = np.abs(gt - pre)

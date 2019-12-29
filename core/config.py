@@ -11,7 +11,7 @@ config.dataset.name = 'NYU'
 config.dataset.data_path = '/media/4TB/Research/DataSet/NYU2/'
 config.dataset.train_data_file = 'train_40k.p'
 config.dataset.val_data_file = 'test.p'
-#config.dataset.crop_size = [228, 304]
+config.dataset.crop_size = [228, 304]
 
 config.network = edict()
 config.network.backbone_fix_bn = False
@@ -25,10 +25,10 @@ config.train.augment = edict()
 config.train.augment.brightness = 0.4
 config.train.augment.contrast = 0.4
 config.train.augment.saturation = 0.4
-config.train.augment.min_size = [320]
-config.train.augment.canonical_size = 320
+config.train.augment.min_size = [240]
+config.train.augment.canonical_size = 240
 config.train.augment.max_size = [512]
-config.train.augment.rotation = 5
+config.train.augment.rotation = -1
 
 config.train.batch_size = 8
 config.train.lr = 1e-4
@@ -50,8 +50,8 @@ config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 config.test = edict()
 config.test.batch_size = 1
 config.test.augment = edict()
-config.test.augment.min_size = [320]
-config.test.augment.canonical_size = 320
+config.test.augment.min_size = [240]
+config.test.augment.canonical_size = 240
 config.test.augment.max_size = [512]
 
 
