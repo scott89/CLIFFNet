@@ -2,10 +2,11 @@ import torch
 import numpy as np
 
 def l1_loss(gt, pre, mask=None):
-    if mask is None:
-        mask = gt
-    pre = pre[mask>=0]
-    gt = gt[mask>=0]
+    if mask is not False:
+        if mask is None:
+            mask = gt
+        pre = pre[mask>=0]
+        gt = gt[mask>=0]
     loss = torch.mean(torch.abs(gt - pre))
     return loss
 

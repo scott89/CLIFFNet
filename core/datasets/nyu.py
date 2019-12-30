@@ -24,9 +24,9 @@ class NYU(Dataset):
         gt = Image.open(os.path.join(self.data_path, gt_name))
         batch = {'data': image, 'gt': gt}
         batch = self.transform(batch)
-        if self.phase == 'train':
-            batch['gt'] = cv2.resize(batch['gt'][0], (batch['gt'].shape[2]/2, batch['gt'].shape[1]/2), interpolation=cv2.INTER_LINEAR)
-            batch['gt'] = batch['gt'][None, ...]
+        #if self.phase == 'train':
+        #    batch['gt'] = cv2.resize(batch['gt'][0], (batch['gt'].shape[2]/2, batch['gt'].shape[1]/2), interpolation=cv2.INTER_LINEAR)
+        #    batch['gt'] = batch['gt'][None, ...]
         return batch
 
     def collate(self, batch):

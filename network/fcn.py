@@ -98,7 +98,7 @@ class FCN(nn.Module):
         #fpn_p6 = F.interpolate(fpn_p6, fpn_p2.shape[2:], mode='bilinear', align_corners=False)
         feat = torch.cat([fpn_p2, fpn_p3, fpn_p4, fpn_p5], dim=1)
         score_lr = self.score(feat)
-        score = F.interpolate(score_lr, [i/2 for i in img.shape[2:]], mode='bilinear', align_corners=False)
+        score = F.interpolate(score_lr, img.shape[2:], mode='bilinear', align_corners=False)
         return score
 
 
