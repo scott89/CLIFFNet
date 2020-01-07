@@ -93,7 +93,7 @@ def train():
             loss2 = l1_loss(gt_feat2, pre_feat2, False)
             loss3 = l1_loss(gt_feat3, pre_feat3, False)
 
-            loss = loss_l1 + 5*loss1 + 10*loss2
+            loss = loss_l1 + 10*loss1 + 15*loss2
 
             #prediction_g = get_gradient(prediction)
             #gt_g = get_gradient(gt)
