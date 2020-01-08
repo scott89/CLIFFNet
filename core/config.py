@@ -9,7 +9,7 @@ config = edict()
 config.dataset = edict()
 config.dataset.name = 'NYU'
 config.dataset.data_path = '/media/4TB/Research/DataSet/NYU2/'
-config.dataset.train_data_file = 'train_old_40k.p'
+config.dataset.train_data_file = 'train_old_80k.p'
 config.dataset.val_data_file = 'test.p'
 config.dataset.crop_size = [456, 608]
 
@@ -32,7 +32,7 @@ config.train.augment.rotation = -1
 
 config.train.batch_size = 8
 config.train.lr = 1e-4
-config.train.lr_decay_iterations = [80000, 120000, 160000]
+config.train.lr_decay_iterations = [120000, 160000, 240000]
 config.train.warmup_it = -1
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
