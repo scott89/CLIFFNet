@@ -41,11 +41,11 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_perc_v3.2/'
+config.train.output_path = 'models/nyu_perc_v3.2.1/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_base_v1.3/epoch-0.pth'
-config.train.perc_snapshot = 'models/nyu_scene_v2.0/epoch-18.pth'
+config.train.perc_snapshot = 'models/nyu_scene_v1.0/epoch-18.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 
