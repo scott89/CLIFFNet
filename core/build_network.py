@@ -14,7 +14,7 @@ def build_network():
 
 
 def build_loss_network(snapshot):
-    net = vgg16_d3(inter_output_layer=[3, 8])
+    net = vgg16_d3(inter_output_layer=[0, 5])
     net = DataParallel(net, device_ids=config.gpu).to(config.gpu[0])
     # load parameters
     ckpt = torch.load(snapshot)

@@ -89,14 +89,14 @@ def train():
             pre_feat3 = feat3[batch_size:]
             pre_feat2 = feat2[batch_size:]
             pre_feat1 = feat1[batch_size:]
-            loss1 = l1_loss(gt_feat1, pre_feat1, False)
-            loss2 = l1_loss(gt_feat2, pre_feat2, False)
+            loss1 = l1_loss(gt_feat1, pre_feat1, False) * 1
+            loss2 = l1_loss(gt_feat2, pre_feat2, False) * 1
             loss3 = l1_loss(gt_feat3, pre_feat3, False)
             if global_step < config.train.perc_loss_warmup:
                 perc_weight = (1.0 * global_step / config.train.perc_loss_warmup)
             else: 
                 perc_weight = 1.0
-            loss = loss_l1 + perc_weight * (10*loss1 + 15*loss2)
+            loss = loss_l1 + perc_weight * (loss1)
 
             #prediction_g = get_gradient(prediction)
             #gt_g = get_gradient(gt)
