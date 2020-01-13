@@ -11,7 +11,14 @@ from core.disp_loss import compute_metrics
 from core.adjust_lr import adjust_lr
 from core.sobel import Sobel
 from torch.backends import cudnn
+import random
 cudnn.benchmark = True
+
+np.random.seed(128)
+random.seed(128)
+torch.cuda.manual_seed_all(128)
+torch.manual_seed(128)
+
 
 def _display_process(img, rgb=False, gt=None):
     img = img.detach().cpu().numpy()
