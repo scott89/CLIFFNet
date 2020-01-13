@@ -32,7 +32,7 @@ config.train.augment.rotation = -1
 
 config.train.batch_size = 8
 config.train.lr = 1e-3
-config.train.lr_decay_iterations = [80000, 120000, 160000]
+config.train.lr_decay_iterations = [500000] #, 120000, 160000]
 config.train.warmup_it = -1
 config.train.perc_loss_warmup = 5000
 config.train.momentum = 0.9
@@ -43,8 +43,8 @@ config.train.display_iter = 20
 config.train.summary_iter = 100
 config.train.output_path = 'models/nyu_perc_v3.3.3/'
 
-config.train.resume = False
-config.train.snapshot = 'models/nyu_base_v1.3/epoch-0.pth'
+config.train.resume = True
+config.train.snapshot = 'models/nyu_perc_v3.3.3/epoch-9.pth'
 config.train.perc_snapshot = 'models/nyu_scene_v1.0/epoch-18.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
