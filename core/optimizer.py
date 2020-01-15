@@ -44,17 +44,15 @@ class SGD(torch.optim.SGD, BaseOptimizer):
                     param_state = self.state[p]
                     if 'momentum_buffer' not in param_state:
                         buf = param_state['momentum_buffer'] = p.data.new().resize_as_(p.data).zero_()
-                        buf.mul_(momentum).add_(group['lr']*lr, d_p)
+                        buf.mul_(momentum).add_(1.0, d_p)
                     else:
                         buf = param_state['momentum_buffer']
-                        buf.mul_(momentum).add_(group['lr']*lr, d_p)
+                        buf.mul_(momentum).add_(1.0, d_p)
                     if nesterov:
                         d_p = d_p.add(momentum, buf)
                     else:
                         d_p = buf
-                    p.data.add_(-1, d_p)
-                else:
-                    p.data.add_(-group['lr']*lr, d_p)
+                p.data.add_(-group['lr']*lr, d_p)
 
         return loss
 

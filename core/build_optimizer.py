@@ -32,11 +32,11 @@ def get_param_lr(net):
         {'params': bn_backbone_params, 'params_names':bn_backbone_names, 'lr': 1.0, 'weight_decay':0},
         {'params': res_backbone_w[0], 'params_names': res_backbone_w[1], 'lr': 1.0},
         {'params': res_backbone_b[0], 'params_names': res_backbone_b[1], 'lr': 1.0, 'weight_decay': 0.0},
-        {'params': bn_dec_params, 'params_names':bn_dec_names, 'lr': 10.0, 'weight_decay':0},
-        {'params': fpn_w[0], 'params_names': fpn_w[1], 'lr': 10.0},
-        {'params': fpn_b[0], 'params_names': fpn_b[1], 'lr': 10.0, 'weight_decay': 0.0},
-        {'params': fcn_w[0], 'params_names': fcn_w[1], 'lr': 10.0},
-        {'params': fcn_b[0], 'params_names': fcn_b[1], 'lr': 10.0, 'weight_decay': 0.0},
+        {'params': bn_dec_params, 'params_names':bn_dec_names, 'lr': 1.0, 'weight_decay':0},
+        {'params': fpn_w[0], 'params_names': fpn_w[1], 'lr': 1.0},
+        {'params': fpn_b[0], 'params_names': fpn_b[1], 'lr': 1.0, 'weight_decay': 0.0},
+        {'params': fcn_w[0], 'params_names': fcn_w[1], 'lr': 1.0},
+        {'params': fcn_b[0], 'params_names': fcn_b[1], 'lr': 1.0, 'weight_decay': 0.0},
     ]
     return params
 
