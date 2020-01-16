@@ -43,6 +43,6 @@ def get_param_lr(net):
 
 def build_optimizer(net):
     params = get_param_lr(net.module)
-    opt = SGD(params, lr=1.0, momentum=config.train.momentum, weight_decay=config.train.weight_decay)
-    #opt = Adam(params, lr=1.0, weight_decay=config.train.weight_decay)
+    #opt = SGD(params, lr=1.0, momentum=config.train.momentum, weight_decay=config.train.weight_decay)
+    opt = Adam(params, lr=1.0, weight_decay=config.train.weight_decay)
     return opt
