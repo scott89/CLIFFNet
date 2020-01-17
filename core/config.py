@@ -31,8 +31,8 @@ config.train.augment.max_size = [512]
 config.train.augment.rotation = -1
 
 config.train.batch_size = 8
-config.train.lr = 1e-5
-config.train.lr_decay_iterations = [500000] #, 120000, 160000]
+config.train.lr = 1e-4
+config.train.lr_decay_iterations = [45000, 90000, 135000] #, 120000, 160000]
 config.train.warmup_it = -1
 config.train.perc_loss_warmup = 100
 config.train.momentum = 0.9
@@ -41,9 +41,9 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_perc_v4.0_p15/'
+config.train.output_path = 'models/nyu_perc_v4.1_r1_10_r2_15/'
 
-config.train.resume = True
+config.train.resume = False
 config.train.snapshot = 'models/nyu_perc_v4.0/epoch-3.pth'
 config.train.perc_snapshot = 'models/nyu_scene_v1.0/epoch-18.pth'
 config.train.pretrained = False
@@ -57,6 +57,6 @@ config.test.augment.canonical_size = 228
 config.test.augment.max_size = [512]
 
 
-config.gpu_id = '1'
+config.gpu_id = '3'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]
