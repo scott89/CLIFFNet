@@ -34,14 +34,14 @@ config.train.batch_size = 8
 config.train.lr = 1e-4
 config.train.lr_decay_iterations = [80000, 120000, 160000] #, 120000, 160000]
 config.train.warmup_it = -1
-config.train.perc_loss_warmup = -1
+config.train.perc_loss_warmup = 100
 config.train.momentum = 0.9
 config.train.weight_decay = 1e-4
 config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_perc_v5.0.1/'
+config.train.output_path = 'models/nyu_perc_v5.1.1/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_perc_v4.0/epoch-3.pth'
