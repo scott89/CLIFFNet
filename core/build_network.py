@@ -3,6 +3,7 @@ from torch.nn import DataParallel
 from core.config import config
 from network.net import Net
 from network.vgg import vgg16_d3
+from network.scene_net import SceneNet
 
 
 
@@ -14,7 +15,8 @@ def build_network():
 
 
 def build_loss_network(snapshot):
-    net = vgg16_d3(inter_output_layer=[3, 8])
+    #net = vgg16_d3(inter_output_layer=[3, 8])
+    net = SceneNet()
     net = DataParallel(net, device_ids=config.gpu).to(config.gpu[0])
     # load parameters
     ckpt = torch.load(snapshot)

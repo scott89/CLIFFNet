@@ -87,18 +87,16 @@ def train():
             
             prediction = net(image)
             loss_l1 = l1_loss(gt, prediction)
-            feat3, feat = loss_net(torch.cat([gt, prediction], 0))
+            feat = loss_net(torch.cat([gt, prediction], 0), [5, 11])
             feat1, feat2 = feat
             batch_size = gt.shape[0]
-            gt_feat3 = feat3[:batch_size]
             gt_feat2 = feat2[:batch_size]
             gt_feat1 = feat1[:batch_size]
-            pre_feat3 = feat3[batch_size:]
             pre_feat2 = feat2[batch_size:]
             pre_feat1 = feat1[batch_size:]
             loss1 = l1_loss(gt_feat1, pre_feat1, False) * 10
             loss2 = l1_loss(gt_feat2, pre_feat2, False) * 15
-            loss3 = l1_loss(gt_feat3, pre_feat3, False)
+            #loss3 = l1_loss(gt_feat3, pre_feat3, False)
             if global_step < config.train.perc_loss_warmup:
                 perc_weight = (1.0 * global_step / config.train.perc_loss_warmup)
             else: 
@@ -123,7 +121,7 @@ def train():
                 train_summary_op.add_scalar('grad_loss', grad_loss.item(), global_step=global_step)
                 train_summary_op.add_scalar('perc_loss1', loss1.item(), global_step=global_step)
                 train_summary_op.add_scalar('perc_loss2', loss2.item(), global_step=global_step)
-                train_summary_op.add_scalar('perc_loss3', loss3.item(), global_step=global_step)
+            #    train_summary_op.add_scalar('perc_loss3', loss3.item(), global_step=global_step)
                 train_summary_op.add_scalar('lr', lr, global_step=global_step)
 
             global_step += 1
