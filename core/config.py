@@ -41,11 +41,11 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_perc_v5.2/'
+config.train.output_path = 'models/nyu_perc_v5.3/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_perc_v4.0/epoch-3.pth'
-config.train.perc_snapshot = 'models/nyu_scene_v3.1/epoch-24.pth'
+config.train.perc_snapshot = 'models/nyu_scene_v3.1_1e-3/epoch-98.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 
@@ -57,6 +57,6 @@ config.test.augment.canonical_size = 228
 config.test.augment.max_size = [512]
 
 
-config.gpu_id = '0'
+config.gpu_id = '2'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]
