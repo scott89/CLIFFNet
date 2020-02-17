@@ -103,10 +103,10 @@ def train():
                 perc_weight = 1.0
             loss = loss_l1 + perc_weight * (loss1 + loss2)
 
-            prediction_g = get_gradient(prediction)
-            gt_g = get_gradient(gt)
-            grad_loss = 2*l1_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1))
-            loss = loss + grad_loss
+            #prediction_g = get_gradient(prediction)
+            #gt_g = get_gradient(gt)
+            #grad_loss = 2*l1_loss(gt_g, prediction_g, mask=torch.cat([gt, gt], 1))
+            #loss = loss + grad_loss
             loss.backward()
             optimizer.step(lr)
             
@@ -118,7 +118,7 @@ def train():
                 train_summary_op.add_image('gt', _display_process(gt), global_step=global_step)
                 train_summary_op.add_image('pre', _display_process(prediction, gt=gt), global_step=global_step)
                 train_summary_op.add_scalar('l1_loss', loss_l1.item(), global_step=global_step)
-                train_summary_op.add_scalar('grad_loss', grad_loss.item(), global_step=global_step)
+                #train_summary_op.add_scalar('grad_loss', grad_loss.item(), global_step=global_step)
                 train_summary_op.add_scalar('perc_loss1', loss1.item(), global_step=global_step)
                 train_summary_op.add_scalar('perc_loss2', loss2.item(), global_step=global_step)
             #    train_summary_op.add_scalar('perc_loss3', loss3.item(), global_step=global_step)
