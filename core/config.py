@@ -41,7 +41,7 @@ config.train.max_epoch = 500
 config.train.lr_decay_epoch = 8
 config.train.display_iter = 20
 config.train.summary_iter = 100
-config.train.output_path = 'models/nyu_perc_v5.3_wo_grad/'
+config.train.output_path = 'models/nyu_perc_v5.5/'
 
 config.train.resume = False
 config.train.snapshot = 'models/nyu_perc_v4.0/epoch-3.pth'

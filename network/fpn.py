@@ -7,7 +7,7 @@ class FPN(nn.Module):
     def __init__(self, feature_dim=256, bn=False):
         super(FPN, self).__init__()
         self.feature_dim = feature_dim
-        self.upsample_method = 'nearest'
+        self.upsample_method = 'bilinear'
         def interpolate(input):
             return F.interpolate(input, scale_factor=2, mode=self.upsample_method, align_corners=False if self.upsample_method == 'bilinear' else None)
         self.fpn_upsample = interpolate
