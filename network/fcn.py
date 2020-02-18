@@ -93,7 +93,8 @@ class Combine(nn.Module):
         x_lc = self.conv1(x_lc)
         x_c = torch.cat([x_h, x_lc], dim=1)
         y = self.conv2(x_c)
-        return y
+        out = y + x_h
+        return out
 
 
 class FCN(nn.Module):
@@ -131,8 +132,8 @@ class FCN(nn.Module):
         #fpn_p6 = self.fcn_subnet6(fpn_p6)
 
         f4 = self.comb4(fpn_p4, fpn_p5)
-        f3 = self.comb4(fpn_p3, f4)
-        f2 = self.comb4(fpn_p2, f3)
+        f3 = self.comb3(fpn_p3, f4)
+        f2 = self.comb2(fpn_p2, f3)
         score_lr = self.score(f2)
         score = F.interpolate(score_lr, img.shape[2:], mode='bilinear', align_corners=False)
         return score
