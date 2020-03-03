@@ -56,7 +56,13 @@ config.test.augment.min_size = [228]
 config.test.augment.canonical_size = 228
 config.test.augment.max_size = [512]
 
+config.test.version = 'v5.5.1'
+config.test.epoch = 53
+config.test.snapshot = 'models/nyu_perc_%s/epoch-%d.pth'%(config.test.version, config.test.epoch)
+config.test.data_file = 'test.p'
+config.test.save_res = True
+config.test.save_path = './res/%s/%d/'%(config.test.version, config.test.epoch)
 
-config.gpu_id = '3'
+config.gpu_id = '2'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]
