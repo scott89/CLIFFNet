@@ -60,7 +60,7 @@ config.test.version = 'v5.5.1'
 config.test.epoch = 53
 config.test.snapshot = 'models/nyu_perc_%s/epoch-%d.pth'%(config.test.version, config.test.epoch)
 config.test.data_file = 'test.p'
-config.test.save_res = True
+config.test.save_res =False
 config.test.save_path = './res/%s/%d/'%(config.test.version, config.test.epoch)
 
 config.gpu_id = '2'

@@ -51,6 +51,7 @@ def compute_metrics(gt, pre, delta):
     gt[gt==0] += 0.001
     pre[pre==0] += 0.001
     rel = np.mean(abs_diff / gt)
+    sq_rel = np.mean(abs_diff**2 / gt)
     rms_log10 = (np.mean(np.abs(np.log(pre) - np.log(gt))**2))**0.5
     r1 = pre / gt
     r2 = gt / pre
@@ -58,5 +59,5 @@ def compute_metrics(gt, pre, delta):
     precision = []
     for d in delta:
         precision.append(np.mean(np.float32(r < d)))
-    return rms, rel, rms_log10, precision
+    return rms, rel, sq_rel, rms_log10, precision
 

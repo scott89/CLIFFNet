@@ -38,7 +38,7 @@ if config.test.save_res:
         os.makedirs(config.test.save_path)
 
 
-rms, rel, rms_log10, p1, p2, p3 = 0, 0, 0, 0, 0, 0
+rms, rel, sq_rel, rms_log10, p1, p2, p3 = 0, 0, 0, 0, 0, 0, 0
 net.module.set_stage('eval')
 for i, batch in enumerate(data_loader):
     image = batch['data'].pin_memory().to(config.gpu[0])
@@ -49,10 +49,11 @@ for i, batch in enumerate(data_loader):
     metrics = compute_metrics(gt, prediction, [1.25, 1.25**2, 1.25**3])
     rms += metrics[0]
     rel += metrics[1]
-    rms_log10 += metrics[2]
-    p1 += metrics[3][0]
-    p2 += metrics[3][1]
-    p3 += metrics[3][2]
+    sq_rel += metrics[2]
+    rms_log10 += metrics[3]
+    p1 += metrics[4][0]
+    p2 += metrics[4][1]
+    p3 += metrics[4][2]
     if config.test.save_res:
         gt = gt[0,0].cpu().numpy()
         pre = prediction[0,0].cpu().numpy()
@@ -68,11 +69,12 @@ for i, batch in enumerate(data_loader):
         cv2.imwrite(config.test.save_path+'%04d-pre.png'%i, pre)
 rms = (rms / len(data_loader))
 rel /= len(data_loader)
+sq_rel /= len(data_loader)
 rms_log10 /= len(data_loader)
 p1 /= len(data_loader)
 p2 /= len(data_loader)
 p3 /= len(data_loader)
 
 epoch = 1
-print("Epoch: %d, Val rms: %f, rel: %f, rms_log10: %f, \
-      p1: %f, p2: %f, p3: %f"%(epoch, rms, rel, rms_log10, p1, p2, p3))
+print("Epoch: %d, Val rms: %f, rel: %f, sq_rel: %f, rms_log10: %f, \
+      p1: %f, p2: %f, p3: %f"%(epoch, rms, rel, sq_rel, rms_log10, p1, p2, p3))
