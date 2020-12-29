@@ -9,7 +9,7 @@ config = edict()
 config.dataset = edict()
 config.dataset.name = 'NYU'
 config.dataset.data_path = '/media/4TB/Research/DataSet/NYU2/'
-config.dataset.train_data_file = 'train_old_40k.p'
+config.dataset.train_data_file = 'train_40k.p'
 config.dataset.val_data_file = 'test.p'
 config.dataset.crop_size = [456, 608]
 
@@ -44,8 +44,8 @@ config.train.summary_iter = 100
 config.train.output_path = 'models/nyu_perc_v5.5.1/'
 
 config.train.resume = False
-config.train.snapshot = 'models/nyu_perc_v4.0/epoch-3.pth'
-config.train.perc_snapshot = 'models/nyu_scene_v3.1_1e-3/epoch-98.pth'
+config.train.snapshot = 'models/nyu_cliff_v4.0/epoch-3.pth'
+config.train.perc_snapshot = 'models/heg-s/epoch-98.pth'
 config.train.pretrained = False
 config.train.pretrained_backbone = 'models/resnet-50-caffe.pth'
 
@@ -58,7 +58,7 @@ config.test.augment.max_size = [512]
 
 config.test.version = 'v5.5.1'
 config.test.epoch = 53
-config.test.snapshot = 'models/nyu_perc_%s/epoch-%d.pth'%(config.test.version, config.test.epoch)
+config.test.snapshot = 'models/nyu_cliff_%s/epoch-%d.pth'%(config.test.version, config.test.epoch)
 config.test.data_file = 'test.p'
 config.test.save_res =False
 config.test.save_path = './res/%s/%d/'%(config.test.version, config.test.epoch)
