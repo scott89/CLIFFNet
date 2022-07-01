@@ -1,0 +1,11 @@
+@inproceedings{cliffnet20,
+  author    = {Lijun Wang and
+               Jianming Zhang and
+               Yifan Wang and
+               Huchuan Lu and
+               Xiang Ruan},
+  title     = {CLIFFNet for Monocular Depth Estimation with Hierarchical Embedding Loss},
+  booktitle = {ECCV},
+  publisher = {Springer},
+  year      = {2020}
+}
