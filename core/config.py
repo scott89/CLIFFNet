@@ -8,7 +8,7 @@ config = edict()
 
 config.dataset = edict()
 config.dataset.name = 'NYU'
-config.dataset.data_path = '/media/4TB/Research/DataSet/NYU2/'
+config.dataset.data_path = '/media/4TB/Research/Data/NYU2/nyu_test/'
 config.dataset.train_data_file = 'train_40k.p'
 config.dataset.val_data_file = 'test.p'
 config.dataset.crop_size = [456, 608]
@@ -27,7 +27,7 @@ config.train.augment.contrast = 0.4
 config.train.augment.saturation = 0.4
 config.train.augment.min_size = [228]
 config.train.augment.canonical_size = 228
-config.train.augment.max_size = [512]
+config.train.augment.max_size = 512
 config.train.augment.rotation = -1
 
 config.train.batch_size = 8
@@ -54,15 +54,15 @@ config.test.batch_size = 1
 config.test.augment = edict()
 config.test.augment.min_size = [228]
 config.test.augment.canonical_size = 228
-config.test.augment.max_size = [512]
+config.test.augment.max_size = 512
 
 config.test.version = 'v5.5.1'
 config.test.epoch = 53
-config.test.snapshot = 'models/nyu_cliff_%s/epoch-%d.pth'%(config.test.version, config.test.epoch)
+config.test.snapshot = 'models/nyu_cliff_%s/epoch-%d-py3.pth'%(config.test.version, config.test.epoch)
 config.test.data_file = 'test.p'
-config.test.save_res =False
+config.test.save_res = True
 config.test.save_path = './res/%s/%d/'%(config.test.version, config.test.epoch)
 
-config.gpu_id = '2'
+config.gpu_id = '0'
 os.environ['CUDA_VISIBLE_DEVICES'] = config.gpu_id
 config.gpu = ['cuda:%s'%i for i,j in enumerate(config.gpu_id.split(','))]
